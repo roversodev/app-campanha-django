@@ -1,0 +1,37 @@
+{% extends 'index.html' %}
+{% load static %}
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'css/404.css' %}">
+
+<main class="main">
+  <!--==================== HOME ====================-->
+  <section class="home">
+      <div class="home__container3 container3">
+          <div class="home__data">
+              <span class="home__subtitle">Error 500</span>
+              <h1 class="home__title">Ola! Amigo</h1>
+              <p class="home__description">
+                Algo deu errado!
+            </p>
+              <p class="home__description">
+                Desculpe, mas estamos enfrentando alguns problemas técnicos. <br>Nossa equipe está trabalhando para resolver o problema o mais rápido possível. <br>Tente novamente em breve.
+              <a href="{% url 'home' %}" class="home__button">
+                  Home
+              </a>
+          </div>
+
+          <div class="home__img">
+              <img src="/static/img/ghost-img.png" alt="">
+              <div class="home__shadow"></div>
+          </div>
+      </div>
+  </section>
+</main>
+
+
+
+<script src="{% static 'js/scrollreveal.min.js' %}"></script>
+<script src="{% static 'js/404.js' %}"></script>
+
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends 'index.html' %}
+
+{% block content %}
+
+
+<main>
+
+    <div class="form-group row">
+        <div class="col-md-5 offset-md-3">
+            <form class="card card-body" action="{% url 'apagar_assunto' assunto_id=assunto.id_assunto %}" method="POST">
+                {% csrf_token %}
+                <fieldset>
+                    {% csrf_token %}
+                    <h2>Tem certeza que deseja apagar este Assunto?</h2>
+                    <div class="mb-3">
+                        <p style="color: red;">Isso apagará a Solução e o Assunto</p>
+                    <div class="mb-3">
+                        <label for="assunto" class="form-label">Assunto</label>
+                        <textarea rows="4" cols="50" disabled class="form-control">{{assunto.assuntoT}}</textarea>
+                    </div>
+                        <label for="clienteNome" class="form-label">Eleitor</label>
+                        <input type="text" id="clienteApagar" name="clienteApagar" value="{{assunto.clienteEscolhido.nome}}" class="form-control" disabled>
+                    </div>
+                    <button type="submit" class="btn btn-danger" style="float: right;">Apagar</button>
+                </fieldset>
+            </form>
+        </div>
+    </div>
+</main>
+{% endblock %}

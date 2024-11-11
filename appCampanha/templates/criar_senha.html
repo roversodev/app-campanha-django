@@ -1,0 +1,187 @@
+{% extends 'index.html' %}
+
+{% load static %}
+
+{% block content %}
+<style>
+main {
+    margin-left: 0;
+    padding: 0;
+    z-index: 1;
+    padding-top: 0;
+}
+.switch{
+    display: none;
+}
+.senha-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: var(--background-color);
+}
+
+.senha-box {
+    text-align: center;
+    background-color: var(--background-form-cadastro);
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: var(--shadow-box);
+    width: 600px;
+    height: 600px;
+    max-width: 90%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+/* Título */
+.senha-titulo {
+    font-size: 3rem;
+    color: #2d22ff; /* Cor primária */
+    margin-bottom: 20px;
+    animation: fadeIn 1s ease-in;
+}
+
+/* Botão de criar senha */
+.senha-btn {
+    background-color: #2d22ff;
+    color: var(--text-color-inv); /* Cor do texto */
+    border: none;
+    padding: 15px 30px;
+    font-size: 1.8rem;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.senha-btn:hover {
+    background-color: #392efd;
+    transform: scale(1.05);
+}
+
+.senha-btn:active {
+    transform: scale(0.98); /* Efeito de clique */
+}
+
+/* Feedback da senha */
+.senha-display {
+    font-size: 1.8rem;
+    color: var(--text-color); /* Texto escuro */
+    margin-top: 20px;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+}
+
+/* Quando a senha é gerada, exibe com animação */
+.senha-display.show {
+    opacity: 1;
+}
+
+.senha-btn:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+.senha-btn.disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+    transform: none;
+}
+
+@media (max-width: 475px) {
+    .senha-box {
+        width: auto;
+        height: auto;
+    }
+
+    .senha-titulo {
+        font-size: 2rem;
+    }
+
+    .senha-btn {
+        font-size: 1.5rem;
+    }
+}
+
+
+/* Animações */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+</style>
+
+
+<main class="senha-container">
+    <div class="senha-box">
+        <h1 class="senha-titulo">Pegue sua Senha</h1>
+        <button id="criar-senha-btn" class="senha-btn">Criar Senha</button>
+        <p id="nova-senha" class="senha-display" style="font-weight: 600;"></p>
+        <p id="naoEsqueca" class="senha-display"></p>
+    </div>
+</main>
+
+
+<script>
+    document.getElementById('criar-senha-btn').addEventListener('click', function() {
+        const btn = document.getElementById('criar-senha-btn');
+        const senhaDisplay = document.getElementById('nova-senha');
+        const naoEsqueca1 = document.getElementById('naoEsqueca');
+        
+        // Desabilita o botão para evitar múltiplos cliques
+        btn.disabled = true;
+        btn.classList.add('disabled'); // Adiciona uma classe para estilo desabilitado
+
+        fetch('/criar_senha/', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+                'Content-Type': 'application/json',
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.numero) {
+                senhaDisplay.textContent = `Senha: ${data.numero}`;
+                naoEsqueca1.textContent =  `Não esqueça pois você não verá essa senha novamente`;
+                naoEsqueca1.classList.add('show')
+                senhaDisplay.classList.add('show');
+            } else {
+                senhaDisplay.textContent = `Erro ao criar senha.`;
+                senhaDisplay.classList.add('show');
+            }
+
+            // Oculta a senha depois de 5 segundos
+            setTimeout(() => {
+                senhaDisplay.classList.remove('show');
+                naoEsqueca1.classList.remove('show');
+                senhaDisplay.textContent = ''; // Limpa o conteúdo
+                naoEsqueca1.textContent = '';
+                btn.disabled = false; // Reabilita o botão
+                btn.classList.remove('disabled'); // Remove a classe de estilo desabilitado
+            }, 5000); // 5000 ms = 5 segundos
+        })
+        .catch(error => {
+            console.error('Erro:', error);
+            senhaDisplay.textContent = `Erro ao criar senha.`;
+            senhaDisplay.classList.add('show');
+
+            // Reabilita o botão após o erro
+            setTimeout(() => {
+                senhaDisplay.classList.remove('show');
+                senhaDisplay.textContent = '';
+                btn.disabled = false;
+                btn.classList.remove('disabled');
+            }, 5000);
+        });
+    });
+</script>
+{% endblock %}

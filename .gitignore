@@ -1,0 +1,64 @@
+venv
+.env# Arquivos Python compilados
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+
+# Ambiente virtual
+venv/
+env/
+*.env
+*.venv
+
+# Arquivos de log
+*.log
+
+# Arquivos do banco de dados SQLite (se estiver usando SQLite)
+db.sqlite3
+
+# Diretórios de migrações
+*/migrations/
+
+# Arquivos de configuração local
+*.sqlite3
+
+# Arquivos gerados pelo Django (ex.: arquivos de media)
+media/
+
+# Arquivos temporários criados durante a execução do servidor
+*.log
+*.pot
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+
+# Arquivos de IDEs
+.vscode/
+.idea/
+
+# Arquivos de configuração do sistema
+.DS_Store
+Thumbs.db
+
+# Arquivos de configuração do Docker (se estiver usando)
+docker-compose.yml
+Dockerfile
+*.env
+
+# Arquivos de testes temporários
+*.coverage
+nosetests.xml
+coverage.xml
+*.hypothesis/
+*.tox/
+*.nox/
+*.coverage.*
+
+# Arquivos de distribuição (se gerar pacotes)
+*.tar.gz
+*.egg
+*.egg-info/
+dist/
+build/

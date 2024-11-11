@@ -1,0 +1,115 @@
+{% extends 'index.html' %}
+
+{% block content %}
+{% load i18n %}
+<style>
+    ul, li {
+        color: var(--text-color);
+    }
+
+    .password-container {
+    position: relative;
+    }
+
+    .password-container input {
+        padding-right: 40px;
+    }
+
+    .password-container i {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        color: #c3c3c3;
+    }
+
+</style>
+<main>
+    <div class="form-group">
+        <div class="col-md-6 offset-md-3">
+            <form method="post" class="card card-body">
+                {% csrf_token %}
+
+                <h1 style="text-align: center;">Altere sua Senha!</h1>
+                <p></p>
+
+                <div class="mb-3 position-relative">
+                    {{form_senha.old_password.errors}}
+                    <label for="old_password" class="form-label">Senha Atual: </label>
+                    <div class="password-container">
+                        <input type="password" class="form-control" name="old_password" id="old_password" required>
+                        <i class="fa-regular fa-eye" id="olho-senha3" onclick="mostrarSenhaAlterar1()"></i>
+                    </div>
+                </div>
+
+                <div class="mb-3 position-relative">
+                    {{form_senha.new_password1.errors}}
+                    <label for="new_password1" class="form-label">Nova senha: </label>
+                    <div class="password-container">
+                        <input type="password" class="form-control" name="new_password1" id="new_password1" required>
+                        <i class="fa-regular fa-eye" id="olho-senha4" onclick="mostrarSenhaAlterar2()"></i>
+                    </div>
+                </div>
+
+                <div class="mb-3 position-relative">
+                    {{form_senha.new_password2.errors}}
+                    <label for="new_password2" class="form-label">Confirmação </label>
+                    <div class="password-container">
+                        <input type="password" class="form-control" name="new_password2" id="new_password2" required>
+                        <i class="fa-regular fa-eye" id="olho-senha5" onclick="mostrarSenhaAlterar3()"></i>
+                    </div>
+                </div>
+                    <input type="submit" value="Alterar" class="btn btn-primary" style="width: 100%; transition: all 0.3s ease;">
+            </form>
+            <br/>
+            <ul>
+                <li>Sua senha NÃO pode ser similar ao seu Usuário.</li>
+                <li>Sua senha PRECISA ter 8 caracteres.</li>
+                <li>Sua senha NÃO pode ser uma senha comum.</li>
+                <li>Sua senha NÃO pode ser apenas numérica.</li>
+            </ul>
+        </div>
+    </div>
+
+<script>
+    function mostrarSenhaAlterar1() {
+        var inputPass = document.getElementById('old_password');
+        var btnShowPass = document.getElementById('olho-senha3');
+
+        if (inputPass.type === 'password') {
+            inputPass.setAttribute('type', 'text');
+            btnShowPass.classList.replace('fa-eye', 'fa-eye-slash');
+        } else {
+            inputPass.setAttribute('type', 'password');
+            btnShowPass.classList.replace('fa-eye-slash', 'fa-eye');
+        }
+    }
+
+    function mostrarSenhaAlterar2() {
+        var inputPass = document.getElementById('new_password1');
+        var btnShowPass = document.getElementById('olho-senha4');
+
+        if (inputPass.type === 'password') {
+            inputPass.setAttribute('type', 'text');
+            btnShowPass.classList.replace('fa-eye', 'fa-eye-slash');
+        } else {
+            inputPass.setAttribute('type', 'password');
+            btnShowPass.classList.replace('fa-eye-slash', 'fa-eye');
+        }
+    }
+
+    function mostrarSenhaAlterar3() {
+        var inputPass = document.getElementById('new_password2');
+        var btnShowPass = document.getElementById('olho-senha5');
+
+        if (inputPass.type === 'password') {
+            inputPass.setAttribute('type', 'text');
+            btnShowPass.classList.replace('fa-eye', 'fa-eye-slash');
+        } else {
+            inputPass.setAttribute('type', 'password');
+            btnShowPass.classList.replace('fa-eye-slash', 'fa-eye');
+        }
+    }
+</script>
+{% endblock %}

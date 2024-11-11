@@ -1,0 +1,25 @@
+{% extends 'index.html' %}
+
+{% load static %}
+
+{% block content %}
+
+
+<main>
+    <div class="form-row">
+        <div class="form-group col-md-6 offset-md-3">
+            <form action="#" class="card card-body">
+                    <h2 style="text-align: center;">Esse CPF já está cadastrado no Sistema</h2>
+                    <p></p>
+                    <h3 style="text-align: center;">O que deseja fazer?</h3>
+                    <p></p>
+
+                    <a href="{% url 'cadastro' %}" class="limpar" style="display: flex; justify-content: center;">Cadastrar outro CPF</a>
+                    <p></p>
+                    <a href="{% url 'home' %}" class="limpar" style="display: flex; justify-content: center;">Home</a>
+            </form>
+        </div>
+    </div>
+</main>
+
+{% endblock %}

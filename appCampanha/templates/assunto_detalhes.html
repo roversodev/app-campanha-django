@@ -1,0 +1,77 @@
+{% extends 'index.html' %}
+{% block content %}
+{% load my_filters %}
+
+
+<main>
+    <div class="form-row">
+        <div class="card card-body cdiv col-md-6 offset-md-3">
+            <h1 class="text-center">Detalhes Atendimento</h1>
+            <br>
+            {% if assunto.status == 'Finalizado' %}
+
+            <div class="form-group col-md-12">
+                <label for="nome" class="form-label">Nome Completo</label>
+                <input type="text" class="form-control" name="nome" id="nome" required="required"
+                    placeholder="Insira seu Nome Completo..." autocomplete="off"
+                    value="{{ assunto.clienteEscolhido.nome }}" disabled />
+            </div>
+            <div class="form-group col-md-12">
+                <label for="nome" class="form-label">CPF</label>
+                <input type="text" class="form-control" name="cpf" id="cpf" required="required" autocomplete="off"
+                    value="{{ assunto.clienteEscolhido.cpf }}" disabled />
+            </div>
+
+
+
+            <div class="mb-3">
+                <label for="solucaoT" class="form-label">Assunto</label>
+                <textarea rows="6" cols="50" type="text" class="form-control" name="solucaoT" id="solucaoT"
+                    disabled>{{assunto.assuntoT}}</textarea>
+            </div>
+            <br>
+
+
+            <div class="mb-3">
+                <h2 class="text-center">Histórico de Atendimento</h2>
+                <br>
+                {% for observacao in observacoes %}
+                <div class="custom-textarea mb-2">
+                    <strong>{{ observacao.data_criacao }} - {{ observacao.atendente.username }}:</strong>
+                    <p class="mb-0">{{ observacao.descricao }}</p>
+                </div>
+                {% endfor %}
+            </div>
+
+            <h2 class="text-center">Finalizado</h2>
+
+            <div class="mb-3">
+                <label for="data_fin" class="form-label">Status de Resolução</label>
+                <div
+                    class="custom-textarea mb-2 {% if assunto.solucionado == 'Não Solucionado' %} naosolu {% elif assunto.solucionado == 'Parcialmente Solucionado' %} parcisolu {% elif assunto.solucionado == 'Solucionado' %} solu {% endif %}">
+                    <p class="mb-0">{{assunto.solucionado}}</p>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="motivo_fin" class="form-label">Motivo</label>
+                <textarea rows="3" cols="50" type="text" class="form-control" name="solucaoT" id="solucaoT"
+                    disabled>{{assunto.motivo_finalizacao}}</textarea>
+            </div>
+
+            <div class="mb-3">
+                <label for="data_fin" class="form-label">Data</label>
+                <div class="custom-textarea mb-2">
+                    <p class="mb-0">{{assunto.data_finalizacao}}</p>
+                    <strong>Por: {{assunto.finalizado_por}}</strong>
+                </div>
+            </div>
+            {% else %}
+            <p>Atendimento em andamento...</p>
+            {% endif %}
+        </div>
+    </div>
+</main>
+
+
+{% endblock %}

@@ -1,0 +1,86 @@
+{% extends 'index.html' %}
+{% load static %}
+{% load permission_tags %}
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'css/tabela.css' %}">
+
+<main id="customers_table">
+    <div class="table">
+        <section class="table__header">
+            <h1>Usuarios</h1>
+            <div class="input-group2">
+                <form action="{% url 'tabela_usuario' %}" method="GET">
+                    <input type="search" placeholder="Pesquisa..." name="search" id="campo_pesquisa" oninput="mascaraCPF(this)" autocomplete="off">
+                    <button type="submit">
+                        <img src="{% static 'img/search.png' %}" alt="">
+                    </button>
+                </form>
+            </div>
+            {% if request.GET.search %}
+                    <a type="submit" href="{% url 'tabela_usuario' %}" class="btn-clear">Limpar</a>
+                    {% endif %}
+        </section>
+        {% if request.GET.search %}
+                    <p style="padding-left: 18px;">Exibindo resultados de: <strong>{{request.GET.search}}</strong></p>
+        {% endif %}
+        <section class="table__body">
+            <table>
+                <thead>
+                    <tr>
+                        <th> User Name <span class="icon-arrow">&UpArrow;</span></th>
+                        <th> Data Cadastro <span class="icon-arrow">&UpArrow;</span></th>
+                        <th> Ultimo Login <span class="icon-arrow">&UpArrow;</span></th>
+                        <th> Ver mais <span class="icon-arrow">&UpArrow;</span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in page %}
+                    <tr>
+                        <td>{{user.username}}</td>
+                        <td>{{user.date_joined}}</td>
+                        <td>{{user.last_login}}</td>
+                        <td class="text-center">
+                                    <form action="{% url 'relatorio_usuario' user_id=user.id %}" method="GET">
+                                        <fieldset>
+                                            <button type="submit" class="btn btn-primary"
+                                                title="Editar"><i class="fa-solid fa-arrow-right"></i></button>
+                                        </fieldset>
+                                    </form>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4">Nenhum usuario cadastrado</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+    </div>
+    <div id="pagination" class="pagination-controls">
+        {% if page.has_previous %}
+            <a href="?page={{ page.previous_page_number }}&search={{ request.GET.search }}">&laquo; Anterior</a>
+        {% else %}
+            <button id="prevPage" disabled>&laquo; Anterior</button>
+        {% endif %}
+        <span id="pageNumber">Página {{ page.number }} de {{ paginator.num_pages }}</span>
+        {% if page.has_next %}
+            <a href="?page={{ page.next_page_number }}&search={{ request.GET.search }}">Próxima &raquo;</a>
+        {% else %}
+            <button id="nextPage" disabled>Próxima &raquo;</button>
+        {% endif %}
+    </div>
+</main>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+    var rows = document.querySelectorAll('table tr');
+    rows.forEach((row, index) => {
+      setTimeout(() => {
+        row.classList.add('show');
+      }, 100 * index); // Delay baseado no índice da linha para uma animação escalonada
+    });
+  });
+</script>
+<script src="{% static 'js/tabela.js' %}"></script>
+{% endblock %}

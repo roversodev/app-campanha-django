@@ -1,0 +1,39 @@
+{% extends 'index.html' %}
+
+{% block content %}
+<main>
+    <div class="form-row">
+        <div class="form-group col-md-6 offset-md-3">
+            <form class="card card-body" action="{% url 'post_assunto' %}" method="POST">
+                {% csrf_token %}
+                <fieldset>
+                    {% csrf_token %}
+                    <h3 class="text-center">Escreva o assunto do Eleitor</h3>
+                    <div class="mb-3">
+                        <label for="assuntoT" class="form-label">Assunto <span class="required">*</span></label>
+                        <textarea rows="6" cols="50" type="text" class="form-control" name="assuntoT" id="assuntoT" required="required" placeholder="Insira o assunto do Eleitor"></textarea> 
+                    </div>
+
+                    <!-- Dropdown para área de atuação -->
+                    <div class="mb-3">
+                        <label for="area_de_atuacao" class="form-label">Área de Atuação <span class="required">*</span></label>
+                        <select name="area_de_atuacao" id="area_de_atuacao" class="form-select" required>
+                            <option value="">Selecione uma área de atuação</option>
+                            {% for atuacao in atuacoes %}
+                                <option value="{{ atuacao.id }}">{{ atuacao.nome }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="clienteNome" class="form-label">Eleitor</label>
+                        <input id="clienteEscolhido" name="clienteEscolhido" class="form-control" value="{{usuario.nome}}" disabled>
+                    <input type="hidden" name="cliente_escolhido_id" id="cliente_escolhido_id" value="{{usuario.id_usuario}}">
+                    <button style="float: right; width: 100%; margin-top: 20px;" type="submit" class="btn btn-primary">Enviar</button>
+                </fieldset>
+            </form>
+            </div>
+        </div>
+    </div>
+</main>
+
+{% endblock %}

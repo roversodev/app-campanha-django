@@ -1,0 +1,502 @@
+{% extends 'index.html' %}
+
+{% load static %}
+
+{% load my_filters %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/home.css' %}">
+<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+
+<div class="content">
+    <main>
+        <div class="header">
+            <div class="left">
+                <h1>DashBoard</h1>
+                <ul class="breadcrumb">
+                    <li><a href="#">
+                            Todo o período
+                        </a></li>
+                        /
+                            <a class="link" href="{% url 'relatorio_senhas' %}" class="active">Relatório Senhas</a>
+            </div>
+        </div>
+
+        <!-- Insights -->
+        <ul class="insights">
+            <!-- Cadastros (Eleitores) -->
+            <li onclick="redirectToPage('{% url 'eleitores' %}')">
+                <i class='bx bx-user'></i> <!-- Ícone de usuário para cadastros -->
+                <span class="info">
+                    <h3>{{ total_eleitores }}</h3>
+                    <p>Cadastros</p>
+                </span>
+            </li>
+        
+            <!-- Assuntos -->
+            <li onclick="redirectToPage('{% url 'assuntos' %}')">
+                <i class='bx bx-conversation'></i> <!-- Ícone de conversa para assuntos -->
+                <span class="info">
+                    <h3>{{ total_assuntos }}</h3>
+                    <p>Assuntos</p>
+                </span>
+            </li>
+        
+            <!-- Soluções -->
+            <li onclick="redirectToPage('{% url 'assuntos' %}')">
+                <i class='bx bx-bulb'></i> <!-- Ícone de lâmpada para soluções -->
+                <span class="info">
+                    <h3>{{ total_solucoes }}</h3>
+                    <p>Soluções</p>
+                </span>
+            </li>
+        
+            <!-- Dataretornos (Calendário) -->
+            <li onclick="redirectToPage('{% url 'calendario_resumo' %}')">
+                <i class='bx bx-calendar'></i> <!-- Ícone de calendário para Dataretornos -->
+                <span class="info">
+                    <h3>{{ total_dataretornos }}</h3>
+                    <p>Calendário</p>
+                </span>
+            </li>
+        </ul>
+        
+        <!-- End of Insights -->
+
+        <div class="bottom-data">
+
+            <!-- Reminders -->
+            
+
+            <div class="orders" style="flex: 0 0 100%; max-width: 100%;">
+                <div class="header" style="display: flex; justify-content: space-between; align-items: center;">
+                    <div style="display: flex; align-items: center;">
+                        <i class='bx bx-chart'></i>
+                        <h3 style="margin-left: 10px;">Gráfico de Registros</h3>
+                    </div>
+                    <div class="chart-buttons" style="display: flex;"> <!-- Adiciona um espaço entre os botões -->
+                        <button class="chart-button active" onclick="updateChart('7')" id="button-7" style="border-top-left-radius: 4px; border-bottom-left-radius: 4px;">7 Dias</button>
+                        <button class="chart-button" onclick="updateChart('30')" id="button-30">Mês</button>
+                        <button class="chart-button" onclick="updateChart('90')" id="button-90" style="border-top-right-radius: 4px; border-bottom-right-radius: 4px;">3 Meses</button>
+                    </div>
+                </div>
+                <canvas id="myChart" style="display: block; height: 220px; width: 577px;"></canvas>
+            </div>
+
+            <div class="orders">
+                <div class="header">
+                    <i class='bx bx-receipt'></i>
+                    <h3>Cadastros Recentes</h3>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>CPF</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for eleitor in eleitores %}
+                        <tr data-url="{% url 'relatorio_eleitor' usuario_id=eleitor.id_usuario %}" onclick="redirectToReport(this)">
+                            <td>
+                                <p>{% with eleitor.nome|split as nomes %}
+                                    {{ nomes.0|capitalize_words }} {{ nomes.1|capitalize_words }}
+                                {% endwith %}</p>
+                            </td>
+                            <td>{{eleitor.cpf}}</td>
+                            <td><span class="status completed">Cadastrado</span></td>
+                            {% empty %}
+                            <td>Nenhum cadastro</td>
+                            {% endfor %}
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="orders">
+                <div class="header">
+                    <i class='bx bx-comment-detail'></i>
+                    <h3>Assuntos Recentes</h3>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Título</th>
+                            <th>Data de Criação</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for assunto in assuntos2 %}
+                        <tr data-url="{% url 'assuntos' %}" onclick="redirectToReport(this)">
+                            <td>{{ assunto.clienteEscolhido.cpf }}</td>
+                            <td>{{ assunto.data_criacao|date:"d/m/Y" }}</td>
+                            <td>
+                                {% if assunto.status == 'Finalizado' %}
+                                    <span class="status completed">Finalizado</span>
+                                {% elif assunto.status == 'Pendente' %}
+                                    <span class="status not-completed">Pendente</span>
+                                {% elif assunto.status == 'Em Atendimento' %}
+                                    <span class="status pending">Em Atendimento</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="3">Nenhum assunto cadastrado</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="reminders">
+                <div class="header">
+                    <i class='bx bx-user'></i>
+                    <h3>Estatísticas</h3>
+                </div>
+                <ul class="task-list">
+                    <li class="completed">
+                        <div class="task-title">
+                            <i class='bx bx-user-plus'></i>
+                            <p>Cadastros Hoje: </p>
+                            <p style="font-weight: 600; font-size: 1.5rem;">{{eleitores_hoje}}</p>
+                        </div>
+                        <i class='bx bx-dots-vertical-rounded'></i>
+                    </li>
+                    
+                    <li class="not-completed">
+                        <div class="task-title">
+                            <i class='bx bx-calendar'></i>
+                            <p>Cadastros este mês: </p>
+                            <p style="font-weight: 600; font-size: 1.5rem;">{{eleitores_mes}}</p>
+                        </div>
+                        <i class='bx bx-dots-vertical-rounded'></i>
+                    </li>
+                    <li class="completed">
+                        <div class="task-title">
+                            <i class='bx bx-check-circle'></i>
+                            <p>Assuntos Solucionados: </p>
+                            <p style="font-weight: 600; font-size: 1.5rem;">{{ porcentagem_resolucao|floatformat:2 }}%</p>
+                        </div>
+                        <i class='bx bx-dots-vertical-rounded'></i>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="orders">
+                <div class="header">
+                    <i class='bx bx-group'></i>
+                    <h3>Genêro</h3>
+                </div>
+                <div style="display: flex; justify-content: center; align-items: center;">
+                <canvas id="graficoGenero" style="max-width: 400px; max-height: 300px;"></canvas>
+                </div>
+            </div>
+
+            <div class="orders">
+                <div class="header">
+                    <i class='bx bx-map'></i>
+                    <h3>Bairro</h3>
+        
+                </div>
+                <div style="display: flex; justify-content: center; align-items: center;">
+                <canvas id="graficoBairro" style="max-width: 400px; max-height: 300px;"></canvas>
+                </div>
+            </div>
+
+            <div class="orders">
+                <div class="header">
+                    <i class='bx bx-user'></i>
+                    <h3>Usuários do Sistema</h3>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Atendente</th>
+                            <th>Cadastros</th>
+                            <th>Assuntos</th>
+                            <th>Soluções</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for atendente in desempenho_atendentes %}
+                        <tr data-url="{% url 'relatorio_usuario' user_id=atendente.id %}" onclick="redirectToReport(this)">
+                            <td>{{ atendente.username }}</td>
+                            <td>{{ atendente.cadastros }}</td>
+                            <td>{{ atendente.assuntos }}</td>
+                            <td>{{ atendente.solucoes }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="4">Nenhum atendimento realizado.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            
+
+            <!-- End of Reminders-->
+
+        </div>
+        <br>
+        <p style="text-align: center;"></p>
+    </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    function redirectToPage(url) {
+        window.location.href = url;
+    }
+
+    function redirectToReport(element) {
+        const url = element.getAttribute('data-url');
+        window.location.href = url;
+    }
+
+</script>
+
+<script>
+    let myChartInstance;
+
+    function updateChart(period) {
+    // Remove a classe 'active' de todos os botões
+    document.querySelectorAll('.chart-button').forEach(button => {
+        button.classList.remove('active');
+    });
+    
+    // Adiciona a classe 'active' ao botão clicado
+    document.getElementById(`button-${period}`).classList.add('active');
+
+    fetch(`/api/get-data/${period}`) // Rota para buscar os dados no backend
+    .then(response => response.json())
+    .then(data => {
+        // Atualiza os dados do gráfico
+        myChartInstance.data.labels = data.labels;
+        myChartInstance.data.datasets[0].data = data.cadastros;
+        myChartInstance.data.datasets[1].data = data.assuntos;
+        myChartInstance.data.datasets[2].data = data.solucoes;
+
+        myChartInstance.update(); // Atualiza o gráfico com os novos dados
+    });
+}
+
+// Inicializar o gráfico no primeiro carregamento
+document.addEventListener('DOMContentLoaded', () => {
+    const ctx = document.getElementById('myChart').getContext('2d');
+    myChartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: {{ labels|safe }},
+            datasets: [
+                {
+                    label: 'Cadastros',
+                    data: {{ data|safe }},
+                    borderWidth: 3,
+                    borderColor: '#0067FF',
+                    backgroundColor: '#0067FF',
+                    borderRadius: 6
+                },
+                {
+                    label: 'Assuntos',
+                    data: {{ assuntos|safe }},
+                    borderWidth: 1,
+                    borderColor: '#FFD700',
+                    backgroundColor: '#FFD700',
+                    borderRadius: 5
+                },
+                {
+                    label: 'Soluções',
+                    data: {{ solucoes|safe }},
+                    borderWidth: 1,
+                    borderColor: '#005f40',
+                    backgroundColor: '#198753',
+                    borderRadius: 5
+                },
+            ]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top',
+                    labels: {
+                        boxWidth: 12,
+                        padding: 15
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(tooltipItem) {
+                            return tooltipItem.dataset.label + ': ' + tooltipItem.raw;
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: ' ',
+                        font: {
+                            size: 14
+                        }
+                    },
+                    grid: {
+                        color: 'grey' // Cor das linhas de grid do eixo X
+                    },
+                    ticks: {
+                        color: 'grey' // Cor dos ticks do eixo X
+                    }
+                },
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: false,
+                        text: 'Número de Cadastros e Soluções'
+                    },
+                    grid: {
+                        color: 'grey' // Cor das linhas de grid do eixo Y
+                    },
+                    ticks: {
+                        color: 'gray'
+                    }
+                },
+            }
+        }
+    });
+});
+
+    window.addEventListener('load', () => {
+    document.querySelector('.content main').classList.add('fade-in');
+});
+
+
+ // Gráfico de Distribuição por Gênero
+var ctxGenero = document.getElementById('graficoGenero').getContext('2d');
+var graficoGenero = new Chart(ctxGenero, {
+    type: 'pie',
+    data: {
+        labels: {{ generos|safe }}, // Labels dos gêneros
+        datasets: [{
+            label: 'Distribuição por Gênero',
+            data: {{ genero_totais|safe }}, // Totais por gênero
+            backgroundColor: [
+                '#1976D2', '#E91E63', '#9C27B0'
+            ],
+            hoverOffset: 4,
+            borderColor: '#FFFFFF',  // Borda das fatias
+            borderWidth: 1,  // Largura da borda
+            shadowOffsetX: 2,
+            shadowOffsetY: 2,
+            shadowBlur: 4,
+            shadowColor: 'rgba(0, 0, 0, 0.5)'  // Sombreamento
+        }]
+    },
+    options: {
+        plugins: {
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        var label = context.label || '';
+                        var value = context.raw; // Valor absoluto
+                        var total = {{ total_generos }}; // Total geral para cálculo de porcentagem
+                        var percentage = (value / total * 100).toFixed(2); // Cálculo da porcentagem
+                        
+                        if (label) {
+                            label += ': ';
+                        }
+                        // Adiciona o valor absoluto e a porcentagem ao tooltip
+                        label += value + ' (' + percentage + '%)';
+                        return label;
+                    }
+                },
+                color: '#FFFFFF',  // Cor dos rótulos
+                font: {
+                    weight: 'bold',
+                    size: 16  // Tamanho dos rótulos
+                }
+            },
+            legend: {
+                    position: 'bottom',
+                    labels: {
+                        boxWidth: 12,
+                        padding: 15,
+                    }
+                },
+        },
+        title: {
+            display: true,
+            text: 'Distribuição por Gênero',  // Título do gráfico
+            fontSize: 18,
+            fontColor: '#333'  // Cor do título
+        },
+        animation: {
+            animateScale: true,  // Animação do gráfico ao ser carregado
+            animateRotate: true
+        }
+    }
+});
+
+
+    // Gráfico de Distribuição por Bairro
+var ctxBairro = document.getElementById('graficoBairro').getContext('2d');
+var graficoBairro = new Chart(ctxBairro, {
+    type: 'pie',
+    data: {
+        labels: {{ bairros|safe }}, // Labels dos bairros
+        datasets: [{
+            label: 'Distribuição por Bairro',
+            data: {{ bairro_totais|safe }}, // Totais por bairro
+            backgroundColor: [
+                '#4CAF50', '#FFEB3B', '#FF9800', '#F44336', '#9E9E9E', 
+                '#00BCD4', '#CDDC39', '#FFC107', '#03A9F4', '#795548'
+            ],
+            hoverOffset: 4,
+            borderColor: '#FFFFFF',  // Borda das fatias
+            borderWidth: 1,  // Largura da borda
+        }]
+    },
+    options: {
+        plugins: {
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        var label = context.label || '';
+                        var value = context.raw;
+                        var total = {{ total_bairros }};
+                        var percentage = (value / total * 100).toFixed(2);
+                        
+                        if (label) {
+                            label += ': ';
+                        }
+                        label += value + ' (' + percentage + '%)';
+                        return label;
+                    }
+                }
+            },
+            legend: {
+                    display: true,
+                    position: 'bottom',
+                    labels: {
+                        boxWidth: 12,
+                        padding: 15,
+                    }
+                },
+        },
+        title: {
+            display: true,
+            text: 'Distribuição por Bairro',  // Título do gráfico
+            fontSize: 18,
+            fontColor: '#333'  // Cor do título
+        },
+        animation: {
+            animateScale: true,  // Animação do gráfico ao ser carregado
+            animateRotate: true
+        }
+    }
+});
+</script>
+{% endblock %}

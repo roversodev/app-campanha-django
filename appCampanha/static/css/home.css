@@ -1,0 +1,596 @@
+:root {
+    --light: #fff;
+    --primary: #1976D2;
+    --light-primary: #CFE8FF;
+    --grey: #eee;
+    --dark-grey: #AAAAAA;
+    --dark: #363949;
+    --danger: #D32F2F;
+	--light-danger: #FECDD3;
+    --warning: #FBC02D;
+    --light-warning: #FFF2C6;
+    --success: #388E3C;
+    --light-success: #BBF7D0;
+}
+
+
+
+@keyframes fadeInScale {
+    0% {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.fade-in {
+    opacity: 0;
+    animation: fadeInScale 0.8s ease-out forwards; /* Animação mais longa para suavidade */
+}
+
+
+
+.bx{
+    font-size: 1.7rem;
+}
+
+.content{
+    position: relative;
+    width: calc(100% - 230px);
+    left: 72px;
+    transition: all 0.3s ease;
+}
+
+
+.content main{
+    width: 100%;
+    padding: 36px 24px;
+    max-height: calc(100vh - 56px);
+    transition: all 0.3s ease;
+}
+
+.content main .header{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    grid-gap: 16px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+}
+
+.content main .header .left h1{
+    font-size: 36px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: var(--text-color);
+}
+
+.content main .header .left .breadcrumb{
+    display: flex;
+    align-items: center;
+    grid-gap: 16px;
+}
+
+.content main .header .left .breadcrumb li{
+    color: var(--dark);
+}
+
+.content main .header .left .breadcrumb li a{
+    color: var(--dark-grey);
+    pointer-events: none;
+    text-decoration: none;
+}
+
+.content main .header .left .breadcrumb li a.active{
+    color: var(--primary);
+    pointer-events: none;
+}
+
+.content main .header .report{
+    height: 36px;
+    padding: 0 16px;
+    border-radius: 36px;
+    background: var(--primary);
+    color: var(--text-color-inv);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    grid-gap: 10px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: transform 0.3s ease;
+    box-shadow: 0 4px 8px rgba(255, 255, 255, 0.05), 
+                0 1px 2px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+
+.report:hover {
+    background-color: #176cc2;
+    transform: scale(1.05);
+    box-shadow: 0 8px 15px rgba(255, 255, 255, 0.1), 
+    0 4px 6px rgba(0, 0, 0, 0.15);
+}
+
+a, .insights li {
+    transition: all 0.3s ease;
+}
+
+.content main .header .report:active{
+    transform: scale(0.95);
+}
+
+
+
+.content main .insights{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    grid-gap: 24px;
+    margin-top: 36px;
+}
+
+
+.content main .insights li{
+    padding: 24px;
+    background: var(--background-form-cadastro);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    grid-gap: 24px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.content main .insights li:hover{
+    transform: translateY(-10px);
+    box-shadow: 0 8px 15px rgba(255, 255, 255, 0.1), 
+    0 4px 6px rgba(0, 0, 0, 0.15);
+}
+
+.content main .insights li .bx{
+    width: 80px;
+    height: 80px;
+    border-radius: 10px;
+    font-size: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.content main .insights li:nth-child(1) .bx{
+    background: var(--light-primary);
+    color: var(--primary);
+}
+
+.content main .insights li:nth-child(2) .bx{
+    background: var(--light-warning);
+    color: var(--warning);
+}
+
+.content main .insights li:nth-child(3) .bx{
+    background: var(--light-success);
+    color: var(--success);
+}
+
+.content main .insights li:nth-child(4) .bx{
+    background: var(--light-danger);
+    color: var(--danger);
+}
+
+
+.content main .insights li .info h3{
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.content main .insights li .info p{
+    color: var(--text-color);
+}
+
+.content main .bottom-data{
+    display: flex;
+    flex-wrap: wrap;
+    grid-gap: 24px;
+    margin-top: 24px;
+    width: 100%;
+    color: var(--text-color);
+}
+
+.content main .bottom-data>div{
+    border-radius: 20px;
+    background: var(--background-form-cadastro);
+    padding: 0px 24px;
+    overflow-x: auto;
+}
+
+.content main .bottom-data .header{
+    display: flex;
+    align-items: center;
+    grid-gap: 16px;
+    margin-bottom: 24px;
+}
+
+.content main .bottom-data .header h3{
+    margin-right: auto;
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.content main .bottom-data .header .bx-plus{
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.content main .bottom-data .header .bx-plus:hover{
+    transform: rotate(180deg);
+}
+
+.content main .bottom-data .header .bx-plus:active{
+    transform: scale(1.3);
+}
+
+.content main .bottom-data .orders{
+    flex-grow: 1;
+    flex-basis: 500px;
+}
+
+.content main .bottom-data .orders table{
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.content main .bottom-data .orders table th{
+    padding-bottom: 12px;
+    font-size: 13px;
+    text-align: left;
+    border-bottom: 1px solid var(--grey);
+}
+
+.content main .bottom-data .orders table td{
+    padding: 16px 0;
+}
+
+.content main .bottom-data .orders table tr td:first-child{
+    display: flex;
+    align-items: center;
+    grid-gap: 12px;
+    padding-left: 6px;
+}
+
+.content main .bottom-data .orders table td img{
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.content main .bottom-data .orders table tbody tr{
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.content main .bottom-data .orders table tbody tr:hover{
+    background: var(--separador);
+}
+
+.content main .bottom-data .orders table tr td .status{
+    font-size: 10px;
+    padding: 6px 16px;
+    color: var(--light);
+    border-radius: 20px;
+    font-weight: 700;
+}
+
+
+.content main .bottom-data .orders table tr td .status.completed{
+    background: var(--success);
+    color: var(--text-color-inv);
+}
+
+.content main .bottom-data .orders table tr td .status.not-completed{
+    background: var(--danger);
+    color: var(--text-color-inv);
+}
+
+.content main .bottom-data .orders table tr td .status.process{
+    background: var(--primary);
+    color: var(--text-color-inv);
+}
+
+.content main .bottom-data .orders table tr td .status.pending{
+    background: var(--warning);
+    color: var(--text-color-inv);
+}
+
+.content main .bottom-data .reminders{
+    flex-grow: 1;
+    flex-basis: 300px;
+    max-height: 500px;
+}
+
+.content main .bottom-data .reminders .task-list{
+    width: 100%;
+}
+
+.content main .bottom-data .reminders .task-list li{
+    width: 100%;
+    margin-bottom: 16px;
+    background: var(--separador);
+    padding: 14px 10px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.content main .bottom-data .reminders .task-list li .task-title{
+    display: flex;
+    align-items: center;
+}
+
+.content main .bottom-data .reminders .task-list li .task-title p{
+    margin-left: 6px;
+}
+
+.content main .bottom-data .reminders .task-list li.completed{
+    border-left: 10px solid var(--success);
+}
+
+.content main .bottom-data .reminders .task-list li.not-completed{
+    border-left: 10px solid var(--danger);
+}
+
+.content main .bottom-data .reminders .task-list li:last-child{
+   margin-bottom: 0;
+}
+
+.messages {
+    margin-top: 10px; /* Espaço entre o botão e a mensagem */
+    text-align: center; /* Centraliza o texto */
+}
+
+.alert {
+    color: var(--danger); /* Usa o vermelho definido na variável de cor */
+    font-size: 14px; /* Tamanho da fonte */
+    font-weight: 600; /* Deixa o texto um pouco mais destacado */
+    padding: 5px 0; /* Espaçamento interno */
+    animation: fadeIn 0.5s ease-in-out; /* Suave animação ao exibir */
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+
+@media screen and (max-width: 768px) {
+
+    .content{
+        width: 100%;
+        left: 0;
+    }
+
+    .content main .header{
+        margin-top: 20px;
+    }
+    .bottom-data{
+        padding-bottom: 70px;
+    }
+}
+
+@media screen and (max-width: 576px) {
+
+    .content main .insights {
+        grid-template-columns: 1fr;
+    }
+
+    .content main .bottom-data .header{
+        min-width: 340px;
+    }
+
+    .content main .bottom-data .orders table{
+        min-width: 340px;
+    }
+
+    .content main .bottom-data .reminders .task-list{
+        min-width: 340px;
+    }
+
+    .content main .header{
+        margin-top: 20px;
+    }
+
+}
+
+
+/* Estilo do container (inicialmente oculto) */
+.alert-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.5);
+    visibility: hidden;
+    opacity: 0;
+    transition: visibility 0s, opacity 0.3s ease-in-out;
+    z-index: 10000; /* Garante que fique acima de outros elementos */
+  }
+  
+  /* Estilo da caixa de alerta */
+  .alert-box {
+    background-color: var(--background-form-cadastro);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    max-width: 400px;
+    width: 80%;
+  }
+  
+  /* Mensagem do alerta */
+  .alert-box p {
+    font-size: 18px;
+    margin-bottom: 20px;
+    color: var(--text-color);
+  }
+  
+  /* Botão do alerta */
+  .alert-button {
+    background-color: #1976D2;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+  }
+  
+  /* Efeito hover no botão */
+  .alert-button:hover {
+    background-color: #145a9f;
+    transform: scale(1.05);
+  }
+
+  .alert-button:active {
+    transform: scale(0.95);
+  }
+  
+  /* Estilo de exibição */
+  .alert-container.show {
+    visibility: visible;
+    opacity: 1;
+  }
+
+
+  .confirm-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.5); /* Fundo escuro com opacidade */
+    visibility: hidden;
+    opacity: 0;
+    transition: visibility 0s, opacity 0.3s ease-in-out;
+    z-index: 10000;
+}
+
+.confirm-box {
+    background-color: var(--background-form-cadastro);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    max-width: 400px;
+    width: 80%;
+}
+
+.confirm-box p {
+    font-size: 18px;
+    margin-bottom: 20px;
+    color: var(--text-color);
+}
+
+.confirm-button, .cancel-button {
+    background-color: #1976D2;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    margin: 5px;
+}
+
+.confirm-button:hover {
+    background-color: #145a9f;
+    transform: scale(1.05);
+}
+
+.confirm-button:active {
+    transform: scale(0.95);
+}
+
+.cancel-button {
+    background-color: #D32F2F;
+}
+
+.cancel-button:hover {
+    background-color: #b71c1c;
+    transform: scale(1.05);
+}
+
+.cancel-button:active {
+    transform: scale(0.95);
+}
+
+/* Estilo de exibição */
+.confirm-container.show {
+    visibility: visible;
+    opacity: 1;
+}
+
+
+.link{
+    text-decoration: none;
+}
+
+.link:hover{
+    text-decoration: underline;
+}
+
+.link:active{
+    transform: scale(0.95);
+}
+.chart-buttons {
+top: 10px;          /* Distância do topo do gráfico */
+right: 10px;        /* Distância da direita do gráfico */
+display: flex;      /* Exibe os botões em linha */
+    /* Espaçamento entre os botões */
+}
+
+.chart-button {
+padding: 4px 6px; /* Estilo do botão */
+font-size: 14px;   /* Tamanho da fonte */
+border: 1px solid;
+border-color: #007BFF;
+background-color: transparent; /* Cor neutra */
+color: #007BFF; /* Cor do texto */
+cursor: pointer;
+transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+/* Estilo para o botão ativo */
+.chart-button.active {
+background-color: #007BFF; /* Cor de destaque */
+color: white;
+border-color: #007BFF;
+}
+
+/* Hover para botões inativos */
+.chart-button:not(.active):hover {
+transform: translateY(-1px); /* Cor ao passar o mouse */
+}
+
+/* Efeito de clique */
+.chart-button:active {
+transform: translateY(-2px); /* Efeito de "pressionado" ao clicar */
+}

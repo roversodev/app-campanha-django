@@ -1,0 +1,278 @@
+{% extends 'index.html' %}
+
+{% load static %}
+
+{% load my_filters %}
+
+{% block content %}
+
+<style>
+    .btn-clear {
+    background-color: #0C6DFD;
+    color: var(--text-color-inv);
+    padding: 6px 12px;
+    border-radius: 25px;
+    font-size: 1rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
+    cursor: pointer;
+}
+
+/* Efeito ao passar o mouse */
+.btn-clear:hover {
+    background-color: darken(#0C6DFD, 30%);
+    transform: scale(1.05);
+    box-shadow: var(--shadow-box);
+}
+
+.btn-clear:active {
+    transform: scale(0.95);
+}
+    h2,
+    h4 {
+        text-align: center;
+    }
+
+    .assunto,
+    .dataretorno {
+        box-shadow: var(--shadow-box);
+        padding: 20px;
+        margin: 20px auto;
+        max-width: 800px;
+        padding: 20px;
+        background-color: var(--background-form-cadastro);
+        border-radius: 15px;
+        border: 1px solid var(--linha-nav);
+        box-shadow: var(--shadow-box);
+        transition: all 0.3s;
+    }
+
+    .assunto p,
+    .dataretorno p {
+        margin: 5px 0;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+
+    .separador {
+        display: block;
+        content: "";
+        height: 1px;
+        width: 100%;
+        background-color: var(--separador);
+        margin: 1rem 0;
+    }
+
+
+    .btn-warning {
+        background-color: #ffc107;
+        color: #333;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s, box-shadow 0.3s;
+    }
+
+    .btn-warning:hover {
+        background-color: #e0a800;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+
+    /* Responsividade */
+    @media (max-width: 768px) {
+
+        .assunto,
+        .dataretorno {
+            padding: 15px;
+            margin: 10px auto;
+        }
+    }
+
+    .pagination-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+    margin-top: 1rem;
+}
+.pagination-controls a{
+    text-decoration: none;
+}
+
+.pagination-controls button,
+.pagination-controls a {
+    border: none;
+    background-color: transparent;
+    font-size: 1rem;
+    font-weight: bold;
+    color: var(--text-color);
+    padding: 0.4rem 1rem;
+    margin: 0 0.5rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    border-radius: 4px;
+    outline: none;
+}
+
+.pagination-controls button:hover, .pagination-controls a:hover {
+    background-color: #0C6DFD;
+    color: #fff;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+}
+
+
+.pagination-controls button:disabled {
+    color: var(--disabled-paginator-cl);
+    background-color: var(--disabled-paginator-bg);
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+
+#pageNumber {
+    font-size: 1rem;
+    font-weight: bold;
+    margin: 0 1rem;
+    color: var(--text-color);
+    transition: color 0.3s ease;
+}
+
+/* Efeito hover no Indicador */
+#pageNumber:hover {
+    color: #0C6DFD;
+}
+</style>
+
+<main>
+    <form method="GET" action="" style="float: right;">
+        <div class="row">
+            <div class="col-md-9">
+                <input type="text" class="form-control" name="search" placeholder="Pesquisa..." value="{{ request.GET.search }}" oninput="mascaraCPF(this)" autocomplete="off">
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-secondary"><i class="fa-solid fa-magnifying-glass"></i></button>
+                {% if request.GET.search %}
+                <a type="submit" href="{% url 'relatorio_usuario' user_id=user.id %}" class="btn-clear">Limpar</a>
+                {% endif %}
+            </div>
+        </div>
+    </form>
+    <div class="form-group">
+        <div class="col-md-8 offset-md-2">
+            <h2>Detalhes do User</h2>
+            <h4>{{ user.username }}</h4>
+            <br>
+            <h2>Eleitor que Vemos:</h2>
+            {% for usuario in usuarios_page_obj %}
+            <div class="assunto">
+                <b>Eleitor:</b>
+                <p>{{ usuario.nome }}</p>
+                <p>{{ usuario.cpf }}</p>
+                <b>Data de Criação:</b>
+                <p> {{ usuario.data_criacao }}</p>
+                <b>Cadastrado por:</b>
+                <p> {{ usuario.atendente }}</p>
+            </div>
+            {% empty %}
+            <div class="assunto">
+                <b>Nenhum Eleitor Cadastrado.</b>
+            </div>
+            {% endfor %}
+
+            <br>
+            <h2>Assuntos Criados</h2>
+            {% for assunto in assuntos %}
+            <div class="assunto">
+                <b>Assunto:</b>
+                <p>{{ assunto.assuntoT }}</p>
+                <b>Eleitor:</b>
+                <p>{{ assunto.clienteEscolhido.nome }}</p>
+                <p>{{ assunto.clienteEscolhido.cpf }}</p>
+                <b>Data de Criação:</b>
+                <p>{{ assunto.data_criacao }}</p>
+
+                {% if assunto.observacoes.all %}
+                <h4>Observações:</h4>
+                <ul>
+                    {% for observacao in observacoes_por_assunto|get_item:assunto.id_assunto %}
+                    <li style="list-style: none;">
+                        <b>Descrição:</b> <p>{{ observacao.descricao }}</p>
+                        <b>Data de Criação:</b> <p>{{ observacao.data_criacao }}</p>
+                        <b>Atendente:</b> <p>{{ observacao.atendente.username }}</p>
+                        {% if not forloop.last %}
+                        <hr class="separador">
+                        {% endif %}
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p>Nenhuma observação cadastrada.</p>
+                {% endif %}
+            </div>
+            {% empty %}
+            <div class="assunto">
+                <b>Nenhum Cadastro Feito.</b>
+            </div>
+            {% endfor %}
+
+            <br>
+            <h2>Datas Marcadas</h2>
+            {% for dataretorno in dataretornos %}
+            <div class="dataretorno">
+                <b>Eleitor:</b>
+                <p>{{ dataretorno.cliente.nome }}</p>
+                <p>{{ dataretorno.cliente.cpf }}</p>
+                <b>Data:</b>
+                <p>{{ dataretorno.data }}</p>
+                <b>Hora:</b>
+                <p>{{ dataretorno.hora }}</p>
+            </div>
+            {% empty %}
+            <div class="dataretorno">
+                <b>Nenhuma data cadastrada.</b>
+            </div>
+            {% endfor %}
+
+            <div id="pagination" class="pagination-controls">
+                {% if usuarios_page_obj.has_previous %}
+                    <a href="?page={{ usuarios_page_obj.previous_page_number }}&search={{ request.GET.search }}">&laquo; Anterior</a>
+                {% else %}
+                    <button id="prevPage" disabled>&laquo; Anterior</button>
+                {% endif %}
+                <span id="pageNumber">Página {{ usuarios_page_obj.number }} de {{ usuarios_page_obj.paginator.num_pages }}</span>
+                {% if usuarios_page_obj.has_next %}
+                    <a href="?page={{ usuarios_page_obj.next_page_number }}&search={{ request.GET.search }}">Próxima &raquo;</a>
+                {% else %}
+                    <button id="nextPage" disabled>Próxima &raquo;</button>
+                {% endif %}
+            </div>            
+
+            <br>
+            <h2>Criação do User</h2>
+            <div class="assunto">
+                <b>Data de criação do User:</b>
+                <p>{{ user.date_joined }}</p>
+                <b>Último Login:</b>
+                <p>{{ user.last_login }}</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function mascaraCPF(campo) {
+    // Verifica se o caractere digitado é numérico
+    var isNumeric = /\d/.test(campo.value);
+      
+    // Se for numérico, aplica máscara de CPF
+    if (isNumeric) {
+        campo.value = campo.value.replace(/\D/g, ''); // Remove tudo que não for dígito
+        campo.value = campo.value.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4'); // Formata o CPF
+        }
+    }
+    </script>
+</main>
+
+{% endblock %}

@@ -1,0 +1,156 @@
+.switch {
+    display: none;
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+
+.container-fluid {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+/* Barra Superior */
+.barraTop {
+    background-color: #2d22ff;
+    color: white;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.titulo {
+    font-size: 3rem;
+    font-weight: bold;
+}
+
+.subtitulo {
+    font-size: 2rem;
+}
+
+/* Alinhamento e estilo para a senha atual */
+.senha-atual {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-grow: 1;
+}
+
+.senha-atual .label {
+    font-size: 6rem;
+    color: #2d22ff;
+    display: block;
+    text-align: right;
+    margin-top: 35px;
+}
+
+.senha-numero {
+    font-size: 10rem;
+    font-weight: bold;
+    color: #333;
+}
+
+.guiche {
+    font-size: 8rem;
+    color: #333;
+    font-weight: bold;
+}
+
+/* Contêineres para as últimas senhas */
+.senha-container {
+    background-color: white;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    flex: 1;  /* Expande para ocupar o máximo de espaço */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.ultima-chamada {
+    font-size: 4rem;
+    font-weight: bolder;
+    color: #2d22ff;
+}
+
+.senha-container span {
+    font-size: 2.5rem;
+}
+
+/* Esconde o som de alerta */
+#alert-sound {
+    display: none;
+}
+
+/* Garantir que os contêineres de senhas ocupem todo o espaço restante */
+.senhas-container {
+    display: flex;
+    justify-content: space-around;
+    flex-grow: 1;  /* Expande para ocupar o espaço restante na tela */
+    margin-top: 30px;
+}
+
+
+@media (max-width: 1000px){
+    .barraTop {
+        justify-content: center;
+    }
+    
+    .titulo {
+        font-size: 2.5rem;
+        font-weight: bold;
+        text-align: center !important;
+    }
+    
+    .subtitulo {
+        font-size: 1.5rem;
+        text-align: center;
+    }
+    
+    .senha-atual .label {
+        font-size: 4rem;
+        color: #2d22ff;
+        text-align: center;
+        margin-top: 35px;
+    }
+    
+    .senha-numero {
+        font-size: 6rem;
+        font-weight: bold;
+        color: #333;
+        text-align: center;
+    }
+    
+    .guiche {
+        font-size: 4rem;
+        color: #333;
+        font-weight: bold;
+        text-align: center;
+    }
+
+    .text-end{
+        text-align: center !important;
+    }
+
+    .text-start{
+        text-align: center !important;
+    }
+
+    .img-fluid{
+        max-width: 50%;
+    }
+}

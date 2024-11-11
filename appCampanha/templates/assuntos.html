@@ -1,0 +1,178 @@
+    {% extends 'index.html' %}
+    {% load static %}
+    {% load permission_tags %}
+    {% load my_filters %}
+    {% block content %}
+
+    <link rel="stylesheet" href="{% static 'css/tabela.css' %}">
+
+    <main id="customers_table">
+
+        <div class="table">
+            <section class="table__header">
+                <h1>Assuntos</h1>
+                <div class="input-group2">
+                    <form action="{% url 'assuntos' %}" method="GET">
+                        <input type="search" placeholder="Pesquisa..." name="search" id="campo_pesquisa" oninput="mascaraCPF(this)" autocomplete="off">
+                        <button type="submit">
+                            <img src="{% static 'img/search.png' %}" alt="">
+                        </button>
+                    </form>
+                </div>
+                {% if request.GET.search %}
+                        <a type="submit" href="{% url 'assuntos' %}" class="btn-clear">Limpar</a>
+                        {% endif %}
+                {% if user|can:'export' %}
+                <div class="export__file">
+                    <label for="export-file" class="export__file-btn" title="Export File"></label>
+                    <input type="checkbox" id="export-file">
+                    <div class="export__file-options">
+                        <label>Exportar Como &nbsp; &#10140;</label>
+                        <label for="export-file" id="toPDF">PDF <img src="/static/img/pdf.png" alt=""></label>
+                        <label for="export-file" id="toJSON">JSON <img src="/static/img/json.png" alt=""></label>
+                        <label for="export-file" id="toCSV">CSV <img src="/static/img/csv.png" alt=""></label>
+                        <label for="export-file" id="toEXCEL">EXCEL <img src="/static/img/excel.png" alt=""></label>
+                    </div>
+                </div>
+                {% endif %}
+            </section>
+            {% if request.GET.search %}
+                        <p style="padding-left: 18px;">Exibindo resultados de: <strong>{{request.GET.search}}</strong></p>
+            {% endif %}
+            <section class="table__body">
+                <table style="background-color: transparent;">
+                    <thead>
+                        <tr>
+                            <th> Nome <span class="icon-arrow">&UpArrow;</span></th>
+                            <th> CPF<span class="icon-arrow">&UpArrow;</span></th>
+                            <th> Assunto<span class="icon-arrow">&UpArrow;</span></th>
+                            {% if user|can:'staff' %}
+                            <th> Atuação<span class="icon-arrow">&UpArrow;</span></th>
+                            {% endif %}
+                            <th> Status <span class="icon-arrow">&UpArrow;</span></th>
+                            <th> Wpp <span class="icon-arrow">&UpArrow;</span></th>
+                            <th> Atendimento <span class="icon-arrow">&UpArrow;</span></th>
+                            <th> Excluir <span class="icon-arrow">&UpArrow;</span></th>
+                        </tr>
+                    </thead>
+                    <tbody style="background-color: transparent;">
+                        {% for assunto in page %}
+                        <tr>
+                            <td>{{assunto.clienteEscolhido.nome}}</td>
+                            <td class="copy-cell">{{assunto.clienteEscolhido.cpf}}</td>
+                            <td>{{ assunto.assuntoT|truncate_text:25 }}</td>
+                            {% if user|can:'staff' %}
+                            <td>{{assunto.area_de_atuacao}}</td>
+                            {% endif %}
+                            {% if assunto.status == "Finalizado" %}
+                                <td><p class="status delivered">Finalizado</p></td>
+                            {% elif assunto.status == "Em Atendimento" %}
+                                <td><p class="status pending">Atendimento</p></td>
+                            {% else %}
+                                <td><p class="status cancelled">Pendente</p></td>
+                            {% endif %}
+                            <td class="text-center">
+                                <a href="{{ assunto.clienteEscolhido.link_whatsapp }}" target="_blank" class="btn btn-success">
+                                <i class="fab fa-whatsapp"></i></a>
+                            </td>
+                            <td class="text-center">
+                                        <form action="{% url 'gerenciar_atendimento' assunto_id=assunto.id_assunto %}" method="GET">
+                                            <fieldset>
+                                                <button type="submit" class="btn btn-primary"><i class="fa-solid fa-arrow-right"></i></button>
+                                            </fieldset>
+                                        </form>
+                            </td>
+                            <td class="text-center">
+                                        <form action="{% url 'confirm_assunto' assunto_id=assunto.id_assunto %}" method="GET">
+                                            <fieldset>
+                                                <button type="submit" class="btn btn-danger"><i
+                                                        class="fas fa-trash"></i></button>
+                                            </fieldset>
+                                        </form>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7">Nenhum assunto cadastrado</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </section>
+        </div>
+        {% if paginator %}
+        <div id="pagination" class="pagination-controls">
+            {% if page.has_previous %}
+                <a href="?page={{ page.previous_page_number }}&search={{ request.GET.search }}">&laquo; Anterior</a>
+            {% else %}
+                <button id="prevPage" disabled>&laquo; Anterior</button>
+            {% endif %}
+            <span id="pageNumber">Página {{ page.number }} de {{ paginator.num_pages }}</span>
+            {% if page.has_next %}
+                <a href="?page={{ page.next_page_number }}&search={{ request.GET.search }}">Próxima &raquo;</a>
+            {% else %}
+                <button id="nextPage" disabled>Próxima &raquo;</button>
+            {% endif %}
+        </div>
+        {% endif %}
+        {% if user|can:'export' %}
+        <form method="GET" action="{% url 'assuntos' %}">
+            {% if request.GET.all %}
+                <button type="submit" class="btn btn-outline-warning" style="float: right;">Exibir com Paginação</button>
+            {% else %}
+                <button type="submit" name="all" value="true" class="btn btn-outline-warning" style="float: right; margin-bottom: 20px; color: var(--text-color);">Exibir sem Paginação</button>
+            {% endif %}
+        </form>
+        {% endif %}
+        <div id="popup" class="popup hidden">
+            <div class="popup-content">
+                <p id="popup-text">Texto copiado com sucesso!</p>
+            </div>
+        </div>
+    </main>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+        var rows = document.querySelectorAll('table tr');
+        rows.forEach((row, index) => {
+        setTimeout(() => {
+            row.classList.add('show');
+        }, 100 * index); // Delay baseado no índice da linha para uma animação escalonada
+        });
+    });
+    </script>
+    <script src="{% static 'js/tabela.js' %}"></script>
+    <script>
+        // Seleciona todas as células com a classe 'copy-cell'
+    const copyCells = document.querySelectorAll('.copy-cell');
+    const popup = document.getElementById('popup');
+    const popupText = document.getElementById('popup-text');
+
+    // Função para copiar o texto e mostrar o popup
+    function copyText(event) {
+        const textToCopy = event.target.textContent;
+
+        // Copia o texto para a área de transferência
+        navigator.clipboard.writeText(textToCopy).then(() => {
+            // Exibe o popup de confirmação
+            popupText.textContent = `CPF copiado: ${textToCopy}`;
+            popup.classList.remove('hidden');
+            popup.classList.add('show');
+
+            // Remove o popup após 2 segundos
+            setTimeout(() => {
+                popup.classList.remove('show');
+                popup.classList.add('hidden');
+            }, 2500);
+        }).catch(err => {
+            console.log('Erro ao copiar: ', err);
+        });
+    }
+
+    // Adiciona o evento de clique a cada célula
+    copyCells.forEach(cell => {
+        cell.addEventListener('click', copyText);
+    });
+
+    </script>
+
+    {% endblock %}

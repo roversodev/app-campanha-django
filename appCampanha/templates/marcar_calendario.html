@@ -1,0 +1,87 @@
+{% extends 'index.html' %}
+
+{% block content %}
+
+<main>
+    <div class="form-row">
+        <div class="form-group col-md-5 offset-md-3">
+            <form class="card card-body" action="{% url 'calendario' %}" method="POST">
+                {% csrf_token %}
+                <fieldset>
+                    {% csrf_token %}
+                    <h3>Qual a data de retorno do Eleitor?</h3>
+                    <div class="mb-3">
+                        <p style="color: gray;">Confira os dados antes de marcar.</p>
+                        <label for="dataR" class="form-label">Data</label>
+                        <input type="date" class="form-control" name="dataR" id="dataR" required="required">
+                    </div>
+                    <div class="mb-3">
+                        <label for="tempoM" class="form-label">Horário</label>
+                        <input type="time" class="form-control" name="tempoM" id="tempoM" required="required">
+                    </div>
+                    <div class="mb-3">
+                        <label for="cpf" class="form-label">CPF</label>
+                        <input type="text" class="form-control" name="cpf" id="cpf" required="required" oninput="validateCPF(this.value)">
+                    </div>
+                    <div class="mb-3">
+                        <label for="clienteNome" class="form-label">Nome Completo</label>
+                        <input type="text" class="form-control" name="clienteNome" id="clienteNome" value="CPF Inválido" disabled>
+                    </div>
+                    <button style="width: 100%;" type="submit" class="btn btn-primary">Marcar</button>
+                </fieldset>
+            </form>
+        </div>
+    </div>
+</main>
+            <script>
+                let csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+                const dataInput = document.getElementById('dataR');
+                const hoje = new Date();
+
+                dataInput.min = hoje.toISOString().split('T')[0];
+
+                dataInput.addEventListener('change', function() {
+                    if (dataInput.value < hoje.toISOString().split('T')[0]) {
+                        dataInput.value = hoje.toISOString().split('T')[0];
+                    }
+                });
+            </script>
+
+<script>
+$(document).ready(function(){
+    
+$("#cpf").mask("000.000.000-00");
+
+});
+    function validateCPF(cpf) {
+        fetch('{% url "buscar_nome_por_cpf" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': csrftoken
+            },
+            body: `cpf=${encodeURIComponent(cpf)}`
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                document.getElementById('clienteNome').value = 'CPF inválido';
+            } else {
+                document.getElementById('clienteNome').value = data.nome_completo;
+            }
+        })
+        .catch(error => {
+            console.error('Erro ao buscar o nome:', error);
+            document.getElementById('clienteNome').value = 'Erro ao buscar o nome';
+        });
+    }
+</script>
+
+
+        </div>
+    </div>
+
+</main>
+
+{% endblock %}

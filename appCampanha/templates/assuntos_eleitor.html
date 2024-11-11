@@ -1,0 +1,256 @@
+{% extends 'index.html' %}
+
+{% block content %}
+<script>
+    document.addEventListener('contextmenu', function(event) {
+            event.preventDefault();
+    });
+    </script>
+<style>
+
+@keyframes fadeInScale {
+    0% {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+li {
+    list-style: none;
+}
+
+.fade-in {
+    opacity: 0;
+    animation: fadeInScale 0.8s ease-out forwards; /* Animação mais longa para suavidade */
+}
+
+    .padd{
+        padding: 1px;
+    }
+
+    .assunto,
+    .dataretorno {
+        box-shadow: var(--shadow-box);
+        padding: 20px;
+        margin: 40px auto;
+        max-width: 800px;
+        padding: 20px;
+        background-color: var(--background-form-cadastro);
+        border-radius: 15px;
+        border: 1px solid var(--linha-nav);
+        box-shadow: var(--shadow-box);
+        transition: all 0.3s;
+    }
+
+    .assunto p,
+    .dataretorno p {
+        margin: 5px 0;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+
+    .separador {
+        display: block;
+        content: "";
+        height: 1px;
+        width: 100%;
+        background-color: var(--linha-nav);
+        margin: 1rem 0;
+    }
+
+    h2 {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .testes {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 0;
+    }
+
+    .progress-container {
+        width: 600px;
+        height: 9px;
+        background-color: #e0e0e0;
+        border-radius: 4px;
+        overflow: hidden;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        margin-right: 10px;
+        margin-top: 20px;
+        position: relative;
+    }
+
+    .progress-bar {
+        height: 100%;
+        background-color: #007bff;
+        border-radius: 4px;
+        width: 0;
+        animation: preen 2s forwards;
+    }
+
+    @keyframes preen {
+        to {
+            width: 95%;
+        }
+    }
+
+
+    .progress-containerf {
+        width: 600px;
+        height: 9px;
+        background-color: #e0e0e0;
+        border-radius: 4px;
+        overflow: hidden;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        margin-right: 10px;
+        position: relative;
+    }
+
+    .progress-barf {
+        height: 100%;
+        background-color: #007bff;
+        border-radius: 4px;
+        width: 0;
+        animation: fill 2s forwards;
+    }
+
+    @keyframes fill {
+        to {
+            width: 100%;
+        }
+    }
+
+    .check-icon {
+        font-size: 18px;
+        color: #28a745;
+        opacity: 0;
+        animation: showCheck 2s forwards;
+        animation-delay: 2s;
+    }
+
+    @keyframes showCheck {
+        to {
+            opacity: 1;
+        }
+    }
+
+
+    /* Responsividade */
+    @media (max-width: 768px) {
+
+        .assunto,
+        .dataretorno {
+            padding: 15px;
+            margin: 40px auto;
+        }
+
+        .padd{
+            padding: 20px;
+        }
+    }
+</style>
+
+<div class="padd">
+    {% for assunto in assuntos %}
+        <div class="assunto">
+            {% if assunto.status == 'Finalizado' %}
+                <h2>Seu assunto foi resolvido!</h2>
+                <b>Assunto:</b>
+                <p>{{ assunto.assuntoT }}</p>
+                <b>Data de Criação:</b>
+                <p>{{ assunto.data_criacao }}</p>
+                <b>Atendido por:</b>
+                <p>{{ assunto.atendente }}</p>
+                <hr class="separador">
+                <br><h4 class="text-center">Observações:</h4>
+                {% if assunto.observacoes.exists %}
+                <ul>
+                    {% for observacao in assunto.observacoes.all %}
+                    <li>
+                        <b>Descrição:</b>
+                        <p>{{ observacao.descricao }}</p>
+                        <b>Data de Criação:</b>
+                        <p>{{ observacao.data_criacao }}</p>
+                        <b>Cadastrado por:</b>
+                        <p>{{ observacao.atendente.username }}</p>
+                    </li>
+                        <hr class="separador">
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p>Nenhuma observação cadastrada.</p>
+                {% endif %}
+                <br><h4 class="text-center">Finalização:</h4>
+                <b>Motivo:</b>
+                <p>{{ assunto.motivo_finalizacao }}</p>
+                <b>Data:</b>
+                <p>{{ assunto.data_finalizacao }}</p>
+                <b>Finalizado por:</b>
+                <p>{{ assunto.finalizado_por }}</p>
+                <div class="testes">
+                    <div class="progress-containerf">
+                        <div class="progress-barf"></div>
+                    </div>
+                    <div class="check-icon"><i class="ph-fill ph-check-fat"></i></div>
+                </div>
+            {% else %}
+                <h2>Parece que você tem um assunto ainda pendente</h2>
+                <b>Assunto:</b>
+                <p>{{ assunto.assuntoT }}</p>
+                <b>Data de Criação:</b>
+                <p>{{ assunto.data_criacao }}</p>
+                <b>Atendido por:</b>
+                <p>{{ assunto.atendente }}</p>
+                <b>Status:</b>
+                <p>{{ assunto.status }}</p>
+                <br><h4 class="text-center">Observações:</h4>
+                {% if assunto.observacoes.exists %}
+                <ul>
+                    {% for observacao in assunto.observacoes.all %}
+                    <li>
+                        <b>Descrição:</b>
+                        <p>{{ observacao.descricao }}</p>
+                        <b>Data de Criação:</b>
+                        <p>{{ observacao.data_criacao }}</p>
+                        <b>Cadastrado por:</b>
+                        <p>{{ observacao.atendente.username }}</p>
+                    </li>
+                    {% if not forloop.last %}
+                        <hr class="separador">
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p>Nenhuma observação cadastrada.</p>
+                {% endif %}
+                <b>Aguarde o prazo estipulado...</b>
+                <div class="testes">
+                    <div class="progress-container">
+                        <div class="progress-bar"></div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+        <br class="separador">
+    {% empty %}
+        <h2>Parece que você não tem nenhum assunto pendente!</h2>
+        <div class="assunto">
+            <b>Caso queira tratar algum assunto:</b>
+            <p>Dirija-se a nossa unidade de atendimento.</p>
+        </div>
+    {% endfor %}
+</div>
+
+<script>
+    window.addEventListener('load', () => {
+        document.querySelector('.padd').classList.add('fade-in');
+    });
+</script>
+
+{% endblock %}

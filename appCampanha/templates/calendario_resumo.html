@@ -1,0 +1,126 @@
+{% extends 'index.html' %}
+{% load static %}
+{% load permission_tags %}
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'css/tabela.css' %}">
+
+<main id="customers_table">
+    <div class="table">
+        <section class="table__header">
+            <h1>Calendario Resumo</h1>
+            <div class="input-group2">
+                <form action="{% url 'calendario_resumo' %}" method="GET">
+                    <input type="search" placeholder="Pesquisa..." name="search" id="campo_pesquisa" oninput="mascaraCPF(this)" autocomplete="off">
+                    <button type="submit">
+                        <img src="{% static 'img/search.png' %}" alt="">
+                    </button>
+                </form>
+            </div>
+            {% if request.GET.search %}
+                    <a type="submit" href="{% url 'calendario_resumo' %}" class="btn-clear">Limpar</a>
+                    {% endif %}
+            {% if user|can:'export' %}
+            <div class="export__file">
+                <label for="export-file" class="export__file-btn" title="Export File"></label>
+                <input type="checkbox" id="export-file">
+                <div class="export__file-options">
+                    <label>Exportar Como &nbsp; &#10140;</label>
+                    <label for="export-file" id="toPDF">PDF <img src="/static/img/pdf.png" alt=""></label>
+                    <label for="export-file" id="toJSON">JSON <img src="/static/img/json.png" alt=""></label>
+                    <label for="export-file" id="toCSV">CSV <img src="/static/img/csv.png" alt=""></label>
+                    <label for="export-file" id="toEXCEL">EXCEL <img src="/static/img/excel.png" alt=""></label>
+                </div>
+            </div>
+            {% endif %}
+        </section>
+        <section class="table__body">
+            <table>
+                <thead>
+                    <tr>
+                        <th> Nome <span class="icon-arrow">&UpArrow;</span></th>
+                        <th> CPF <span class="icon-arrow">&UpArrow;</span></th>
+                        <th> Data Marcada <span class="icon-arrow">&UpArrow;</span></th>
+                        <th> Hora <span class="icon-arrow">&UpArrow;</span></th>
+                        <th> Atendente <span class="icon-arrow">&UpArrow;</span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for dataretorno in page %}
+                    <td >{{dataretorno.cliente.nome}}</td>
+                    <td class="copy-cell">{{dataretorno.cliente.cpf}}</td>
+                    <td>{{dataretorno.data}}</td>
+                    <td >{{dataretorno.hora}}</td>
+                    <td>{{dataretorno.atendente}}</td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="12">Nenhum Eleitor marcado.</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </section>
+    </div>
+    <div id="pagination" class="pagination-controls">
+        {% if page.has_previous %}
+            <a href="?page={{ page.previous_page_number }}&search={{ request.GET.search }}">&laquo; Anterior</a>
+        {% else %}
+            <button id="prevPage" disabled>&laquo; Anterior</button>
+        {% endif %}
+        <span id="pageNumber">Página {{ page.number }} de {{ paginator.num_pages }}</span>
+        {% if page.has_next %}
+            <a href="?page={{ page.next_page_number }}&search={{ request.GET.search }}">Próxima &raquo;</a>
+        {% else %}
+            <button id="nextPage" disabled>Próxima &raquo;</button>
+        {% endif %}
+    </div>
+    <div id="popup" class="popup hidden">
+        <div class="popup-content">
+            <p id="popup-text">Texto copiado com sucesso!</p>
+        </div>
+    </div>
+</main>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+    var rows = document.querySelectorAll('table tr');
+    rows.forEach((row, index) => {
+      setTimeout(() => {
+        row.classList.add('show');
+      }, 100 * index); // Delay baseado no índice da linha para uma animação escalonada
+    });
+  });
+</script>
+<script src="{% static 'js/tabela.js' %}"></script>
+<script>
+    const copyCells = document.querySelectorAll('.copy-cell');
+    const popup = document.getElementById('popup');
+    const popupText = document.getElementById('popup-text');
+    
+    // Função para copiar o texto e mostrar o popup
+    function copyText(event) {
+        const textToCopy = event.target.textContent;
+    
+        // Copia o texto para a área de transferência
+        navigator.clipboard.writeText(textToCopy).then(() => {
+            // Exibe o popup de confirmação
+            popupText.textContent = `CPF copiado: ${textToCopy}`;
+            popup.classList.remove('hidden');
+            popup.classList.add('show');
+    
+            // Remove o popup após 2 segundos
+            setTimeout(() => {
+                popup.classList.remove('show');
+                popup.classList.add('hidden');
+            }, 2500);
+        }).catch(err => {
+            console.log('Erro ao copiar: ', err);
+        });
+    }
+    
+    // Adiciona o evento de clique a cada célula
+    copyCells.forEach(cell => {
+        cell.addEventListener('click', copyText);
+    });
+    
+</script>
+
+{% endblock %}

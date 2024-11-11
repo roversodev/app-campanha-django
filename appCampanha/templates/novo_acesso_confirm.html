@@ -1,0 +1,82 @@
+{% extends 'index.html' %}
+
+{% block content %}
+
+<style>
+     .success-container {
+            background-color: var(--form-background);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: var(--shadow-box);
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+            animation: fadeIn 0.7s ease-out;
+        }
+
+        .success-container h1 {
+            font-size: 2rem;
+            color: var(--text-color);
+            margin-bottom: 20px;
+        }
+
+        .success-icon {
+            font-size: 80px;
+            color: #333;
+            margin-bottom: 20px;
+            animation: bounce 0.5s ease-out forwards;
+        }
+
+        .success-message {
+            font-size: 1.2rem;
+            color: var(--text-second);
+            margin-bottom: 30px;
+        }
+
+        /* Animações */
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-20px);
+            }
+            60% {
+                transform: translateY(-10px);
+            }
+        }
+</style>
+
+<main style="display: flex; justify-content: center; align-items: center;">
+    <div class="success-container">
+        <!-- Ícone de Checkmark -->
+        <div class="success-icon"><i class="ph-fill ph-check-fat"></i></div>
+
+        <!-- Mensagem de Sucesso -->
+        <h1>Usuário Criado com Sucesso!</h1>
+        <p class="success-message">Agora você pode acessar sua conta ou continuar navegando.</p>
+
+        <!-- Botão de Ação -->
+        <a href="{% url 'home' %}" class="btn btn-primary">Voltar a Home</a>
+    </div>
+
+    <script>
+        // Animação ao carregar a página
+        window.addEventListener('load', function() {
+            document.querySelector('.success-container').classList.add('animate');
+        });
+    </script>
+</main>
+
+{% endblock %}

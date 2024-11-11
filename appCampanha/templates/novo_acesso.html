@@ -1,0 +1,133 @@
+{% extends 'index.html' %}
+
+{% block content %}
+
+{% load static %}
+
+<main>
+    <div class="form-row">
+        <div class="form-group col-md-6 offset-md-3">
+            <form method="POST" class="card card-body">
+                {% csrf_token %}
+                <h1 class="text-center"> Novo Acesso </h1>
+                <div class="mb-3 position-relative">
+                        <label for="first_name" class="form-label">Primeiro Nome <span class="required">*</span></label>
+                        <input type="text" class="form-control" name="first_name" id="first_name" required="required">
+                    </div>
+
+                    <div class="mb-3 position-relative">
+                        <label for="last_name" class="form-label">Último Nome <span class="required">*</span></label>
+                        <input type="text" class="form-control" name="last_name" id="last_name" required="required">
+                    </div>
+
+                <!-- Campo para E-mail -->
+                <div class="mb-3 position-relative">
+                    <label for="email" class="form-label">E-mail <span class="required">*</span></label>
+                    <input type="email" class="form-control" name="email" id="email" required="required">
+                </div>
+
+                <div class="mb-3 position-relative">
+                    <label for="username" class="form-label">Login <span class="required">*</span></label>
+                    <input type="username" class="form-control" name="username" id="username" required="required">
+                </div>
+
+                <div class="mb-3 position-relative">
+                    <label for="password1" class="form-label">Senha <span class="required">*</span></label>
+                    <div class="password-container">
+                        <input type="password" class="form-control" name="password1" id="password1" required="required">
+                        <i class="fa-regular fa-eye" id="olho-senha" onclick="mostrarSenhaSingUp1()"></i>
+                    </div>
+                </div>
+
+                <div class="mb-3 position-relative">
+                    <label for="password2" class="form-label">Confirme sua Senha <span class="required">*</span></label>
+                    <div class="password-container">
+                        <input type="password" class="form-control" name="password2" id="password2" required="required">
+                        <i class="fa-regular fa-eye" id="olho-senha2" onclick="mostrarSenhaSingUp2()"></i>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="funcao" class="form-label">Função <span class="required">*</span></label>
+                    <select id="funcao" name="funcao" class="form-select">
+                        <option value="Frente">Frente</option>
+                        <option value="Atendente">Atendente</option>
+                        <option value="Solucionador">Solucionador</option>
+                        <option value="Staff">Staff</option>
+                    </select>
+                </div>
+                <div class="mb-3" id="atuacoes-container">
+                    <label class="form-label">Atuações <span class="required">*</span></label>
+                    <div class="atuacoes-container">
+                        {% for atuacao in atuacoes %}
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="atuacoes" id="atuacao_{{ atuacao.id }}" value="{{ atuacao.id }}">
+                                <label class="form-check-label" for="atuacao_{{ atuacao.id }}">
+                                    {{ atuacao.nome }}
+                                </label>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Cadastrar</button>
+            </form>
+            {{ error }}
+            <br>
+        </div>
+        <div class="form-group col-md-8 offset-md-2">
+            <form class="card card-body">
+                <h1 class="text-center">Permissões</h1>
+                <div class="permissions-container">
+                    <div class="permission-item">
+                        <b>Frente</b>
+                        <p>- Cadastrar Eleitores</p>
+                    </div>
+                    <div class="permission-item">
+                        <b>Atendente</b>
+                        <p>- Home</p>
+                        <p>- Cadastrar e Editar Eleitores</p>
+                        <p>- Inserir Assuntos</p>
+                        <p>- Chamar Senhas no Painel</p>
+                        <p>- Calendário</p>
+                        <p>- Relatório de Eleitores</p>
+                        <p>- Tabelas de Eleitores e Calendário</p>
+                    </div>
+                    <div class="permission-item">
+                        <b>Solucionador</b>
+                        <p>- Home</p>
+                        <p>- Cadastrar e Editar Eleitores</p>
+                        <p>- Inserir Assuntos e dar Atendimento neles</p>
+                        <p>- Calendário</p>
+                        <p>- Relatório de Eleitores</p>
+                        <p>- Tabelas de Eleitores, Assuntos e Calendário</p>
+                    </div>
+                    <div class="permission-item">
+                        <b>Staff</b>
+                        <p>- Todos acima</p>
+                        <p>- Dashboard</p>
+                        <p>- Relatórios de Eleitores, Usuários e Senhas</p>
+                        <p>- Criação de novos acessos a plataforma</p>
+                        <p>- Excluir Eleitores, Assuntos e Soluções (Senhas não)</p>
+                    </div>
+                    <div class="permission-item">
+                        <b>Super Admin</b>
+                        <p>- Acesso total a admin do site</p>
+                        <p>- Contate o Administrador da Plataforma</p>
+                    </div>
+                    <div class="permission-item">
+                        <b>Atuações (Apenas para Solucionador)</b>
+                        <p>- Cada atuação difere quando inserimos um Assunto no Eleitor.</p>
+                        <p>- Por exemplo o Usuario que não for STAFF e tiver uma area de atuação designada ele apenas verá os Assuntos e Soluções (Se for Solucionador) da sua respectiva area de atuação</p>
+                        <p>- Válido apenas para acessos SOLUCIONADORES, já que atendentes e frente não tem acesso a lista de assuntos.</p>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+
+<script src="{% static 'js/novo_acesso.js' %}"></script>
+
+
+{% endblock %}

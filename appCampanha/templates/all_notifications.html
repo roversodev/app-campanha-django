@@ -1,0 +1,76 @@
+{% extends "index.html" %}
+
+{% load permission_tags %}
+
+{% load static %}
+
+{% block content %}
+<main>
+    {% if user|has_role:"staff" %}
+
+    <!-- Modal de Envio de Notificação -->
+    <div id="sendNotificationModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Enviar Notificação</h5>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="sendNotificationForm">
+                    <div class="form-group">
+                        <label for="recipients" class="form-label">Selecionar destinatários:</label>
+                        <select id="recipients" class="form-control" multiple style="border-radius: 15px;">
+                            {% for user in users %}
+                            <option value="{{ user.id }}" style="border-radius: 15px; padding-left: 15px;">{{ user.username }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="message" class="form-label">Mensagem:</label>
+                        <textarea id="message" class="form-control" rows="3" style="border-radius: 15px;"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="sendNotification()">Enviar</button>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    <div class="notifications-container">
+        <h2 class="text-center">Todas as Notificações</h2>
+
+        <!-- Filtros de Notificação -->
+        <div class="notification-filters">
+            <button class="btn btn-primary" id="show-all" onclick="filterNotifications('all')">Todas</button>
+            <button class="btn btn-danger" id="show-unread" onclick="filterNotifications('unread')">Não Lidas</button>
+            <button class="btn btn-success" id="show-read" onclick="filterNotifications('read')">Lidas</button>
+            <button class="btn btn-warning" id="mark-all-read" onclick="markAllAsRead()">Ler todas</button>
+            {% if user|has_role:'staff' %}
+            <button class="btn btn-info" id="openModal">ADM</button>
+            {% endif %}
+        </div>
+
+        <!-- Lista de Notificações -->
+        <ul id="notification-list">
+            {% if notifications.count == 0 %}
+            <li class="notification-item">Nenhuma notificação</li>
+            {% else %}
+            {% for notification in notifications %}
+            <li class="notification-item {% if notification.unread %}unread{% endif %}"
+                onclick="markAsRead({{ notification.id }})">
+                {% if notification.unread %}
+                <span class="notification-dot"></span>
+                {% endif %}
+                <span class="notification-text"><strong>{{notification.sender}}:</strong> {{ notification.verb }}</span>
+                <span class="notification-time">{{ notification.timestamp|timesince }} atrás</span>
+            </li>
+            {% endfor %}
+            {% endif %}
+        </ul>
+    </div>
+</main>
+
+<script src="{% static 'js/all_notifications.js' %}"></script>
+
+{% endblock %}

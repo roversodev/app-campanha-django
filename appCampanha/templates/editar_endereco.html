@@ -1,0 +1,72 @@
+{% extends 'index.html' %}
+{% load static %}
+{% block content %}
+<main>
+  <div class="form-row">
+    <div class="form-group col-md-6 offset-md-3">
+      <form class="card card-body" action="{% url 'editar_endereco' endereco.id %}" method="POST" id="EditarEnderecoForm">
+        {% csrf_token %}
+        <h1 class="text-center">Editar Endereço</h1>
+
+        <div class="form-group col-md-12">
+          <label for="cep" class="form-label">CEP</label>
+          <input type="text" class="form-control" name="cep" id="cep" required
+            value="{{ endereco.cep }}" />
+        </div>
+
+        <div class="form-group col-md-12">
+          <label for="endereco" class="form-label">Endereço</label>
+          <input type="text" class="form-control" name="endereco" id="endereco" required
+            value="{{ endereco.endereco }}" />
+        </div>
+
+        <div class="form-group col-md-12">
+          <label for="numero" class="form-label">Número</label>
+          <input type="number" class="form-control" name="numero" id="numero" 
+            value="{{ endereco.numero }}" />
+        </div>
+
+        <div class="form-group col-md-12">
+          <label for="complemento" class="form-label">Complemento</label>
+          <input type="text" class="form-control" name="complemento" id="complemento" 
+            value="{{ endereco.complemento }}" />
+        </div>
+
+        <div class="form-group col-md-12">
+          <label for="bairro" class="form-label">Bairro</label>
+          <input type="text" class="form-control" name="bairro" id="bairro" required
+            value="{{ endereco.bairro }}" />
+        </div>
+
+        <div class="form-group col-md-12">
+          <label for="estado" class="form-label">Estado</label>
+          <input type="text" class="form-control" name="estado" id="estado" required
+            value="{{ endereco.estado }}" />
+        </div>
+
+        <div class="form-group col-md-12">
+          <label for="municipio" class="form-label">Município</label>
+          <input type="text" class="form-control" name="municipio" id="municipio" required
+            value="{{ endereco.municipio }}" />
+        </div>
+        <p></p>
+
+        <div class="form-group col-md-12">
+          <label for="principal" class="form-check-label">Endereço Principal?</label>
+          <input type="checkbox" class="form-check-input" name="principal" id="principal" {% if endereco.principal %}checked{% endif %} />
+        </div>
+        <p></p>
+        <div class="form-group col-md-12">
+          <label for="tipo_endereco" class="form-label">Tipo de Endereço</label>
+          <input type="text" class="form-control" name="tipo_endereco" id="tipo_endereco" value="{{ endereco.tipo_endereco }}" disabled />
+        </div>
+        <p></p> 
+
+        <div class="form-group">
+          <button type="submit" class="btn btn-primary" style="float: right; width: 100%;">Salvar Alterações</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</main>
+{% endblock %}

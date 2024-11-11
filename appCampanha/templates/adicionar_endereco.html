@@ -1,0 +1,69 @@
+{% extends 'index.html' %}
+
+{% load static %}
+
+{% block content %}
+<script src="{% static 'js/buscacep.js' %}"></script>
+<main>
+    <div class="form-row">
+        <div class="form-group col-md-6 offset-md-3">
+            <form action="{% url 'adicionar_endereco' eleitor_id=eleitor.id_usuario %}" class="card card-body" method="post">
+                {% csrf_token %}
+                <h2 class="text-center">Adicionar Endereço</h2>
+                <div class="form-group col-md-12">
+                    <label for="nome" class="form-label">Nome Eleitor</label>
+                    <input type="text" name="nome" id="nome" value="{{eleitor.nome}}" disabled class="form-control">
+                </div>
+                <div class="form-group col-md-12">
+                    <label for="txtCep" class="form-label">Cep <span class="required">*</span></label>
+                    <input type="text" class="form-control" name="txtCep" id="txtCep" required="required" autocomplete="off"/>
+                </div>
+                <div class="form-group col-12">
+                    <label for="endereço" class="form-label">Endereço <span class="required">*</span></label>
+                    <input type="text" class="form-control" name="endereço" id="endereço" required="required" autocomplete="off"/>
+                </div>
+                <div class="form-group col-md-12">
+                    <label for="numero" class="form-label">N° <span class="required">*</span></label>
+                    <input type="number" class="form-control" name="numero" id="numero" required="numero" autocomplete="off"/>
+                </div>
+                <div class="form-group col-md-12">
+                    <label for="complemento" class="form-label">Complemento</label>
+                    <input type="text" class="form-control" name="complemento" id="complemento" autocomplete="off"/>
+                </div>
+                <div class="form-group col-md-12">
+                    <label for="bairro" class="form-label">Bairro <span class="required">*</span></label>
+                    <input type="text" class="form-control" name="bairro" id="bairro" required="required" autocomplete="off"/>
+                </div>
+                <div class="form-group col-md-12">
+                    <label for="estado" class="form-label">Estado <span class="required">*</span></label>
+                    <input type="text" class="form-control" name="estado" id="estado" required="required" autocomplete="off"/>
+                </div>
+                <div class="form-group col-md-12">
+                    <label for="municipio" class="form-label">Município <span class="required">*</span></label>
+                    <input type="text" class="form-control" name="municipio" id="municipio" required="required" autocomplete="off"/>
+                </div>
+                <p></p>
+                <div class="form-group col-md-12">
+                    <label for="principal" class="form-check-label">É o endereço principal?</label>
+                    <input type="checkbox" class="form-check-input" name="principal" id="principal"/>
+                </div>
+                <p></p>
+                <div class="form-group col-md-12">
+                    <label for="tipo_endereco" class="form-label">Tipo de Endereço <span class="required">*</span></label>
+                    <select class="form-select" name="tipo_endereco" id="tipo_endereco" required>
+                        <option value="">Selecione</option>
+                        <option value="Caixa Postal">Caixa Postal</option>
+                        <option value="Residencial">Residencial</option>
+                        <option value="Comercial">Comercial</option>
+                    </select>
+                </div>
+                <div class="form-group col-md-12">
+                    <p></p>
+                    <button type="submit" class="btn btn-primary" style="float: right; width: 100%;">Enviar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+<script src="{% static 'js/cadastro2.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,88 @@
+    .card {
+        border-radius: 15px;
+        box-shadow: var(--shadow-box);
+        border: none;
+        transition: all 0.3s ease;
+    }
+
+    .profile-header {
+        text-align: center;
+        padding: 20px;
+        border-radius: 15px 15px 0 0;
+    }
+
+    .profile-header h2 {
+        margin-bottom: 0;
+    }
+
+    .profile-picture-container {
+        position: relative;
+        margin: 20px auto;
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        overflow: hidden;
+        box-shadow: var(--shadow-box);
+    }
+
+    .profile-picture {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 50%;
+    }
+
+    .edit-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        cursor: pointer;
+    }
+
+    .profile-picture-container:hover .edit-overlay {
+        opacity: 1;
+    }
+
+    /* Botão de lápis e remover */
+    .edit-overlay i {
+        font-size: 1.5rem;
+        margin-right: 20px;
+    }
+
+    .remove-icon {
+        font-size: 1.5rem;
+        margin-left: 20px;
+        color: #ff4c4c;
+    }
+
+    .user-atuacoes {
+        margin-top: 20px;
+        padding: 15px;
+        background-color: var(--item-back);
+        border-radius: 15px;
+        box-shadow: 0 .2rem .4rem rgba(0, 0, 0, 0.05);
+        border: 1px solid var(--linha-nav);
+    }
+
+    .user-atuacoes h5 {
+        margin-bottom: 15px;
+    }
+
+    .user-atuacoes ul {
+        list-style-type: none;
+        padding: 0;
+    }
+
+    .user-atuacoes li {
+        margin: 5px 0;
+    }

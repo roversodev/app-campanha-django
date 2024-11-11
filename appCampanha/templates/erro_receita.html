@@ -1,0 +1,102 @@
+{% extends 'index.html' %}
+
+{% load static %}
+
+{% block content %}
+
+<style>
+    /* Estilos para a página de erro */
+    .error-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+
+    .error-box {
+        background-color: var(--background-form-cadastro);
+        padding: 40px;
+        border-radius: 10px;
+        box-shadow: var(--shadow-box);
+        text-align: center;
+        max-width: 500px;
+        width: 100%;
+    }
+
+    .error-title {
+        font-size: 2rem;
+        color: #D32F2F;
+        /* Cor de erro */
+        margin-bottom: 10px;
+    }
+
+    .error-subtitle {
+        font-size: 1.2rem;
+        color: var(--text-color);
+        /* Cor de texto neutra */
+        margin-bottom: 20px;
+    }
+
+    .error-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .btn-action {
+        background-color: #1976D2;
+        color: var(--text-color-inv);
+        padding: 12px 20px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        text-align: center;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    .btn-action:hover {
+        background-color: #1564b2;
+        /* Cor mais escura no hover */
+        transform: translateY(-3px);
+        /* Efeito de elevação */
+    }
+
+    .btn-action:active {
+        transform: translateY(0);
+        /* Remove a elevação quando clicado */
+    }
+
+    @media (max-width: 576px) {
+        .error-box {
+            padding: 20px;
+        }
+
+        .error-title {
+            font-size: 1.5rem;
+        }
+
+        .error-subtitle {
+            font-size: 1rem;
+        }
+
+        .btn-action {
+            font-size: 1rem;
+            padding: 10px 16px;
+        }
+    }
+</style>
+
+<div class="error-container">
+    <div class="error-box">
+        <h1 class="error-title">Erro ao consultar na Receita</h1>
+        <p class="error-subtitle">Verifique os dados e tente novamente.</p>
+        <p class="error-subtitle">O que deseja fazer?</p>
+        <div class="error-actions">
+            <a href="{% url 'cadastro' %}" class="btn-action">Tentar novamente</a>
+            <a href="{% url 'home' %}" class="btn-action">Home</a>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

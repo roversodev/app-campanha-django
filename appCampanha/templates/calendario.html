@@ -1,0 +1,190 @@
+{% extends 'index.html' %}
+
+{% load static %}
+
+{% block content %}
+
+<style>
+  :root {
+    --fc-border-color: #f6f6f6;
+  }
+
+
+  .modal {
+      display: none; 
+      position: fixed; 
+      z-index: 9999999; 
+      left: 0; 
+      top: 0; 
+      width: 100%; 
+      height: 100%; 
+      overflow: auto; 
+      background-color: rgb(0,0,0);
+      background-color: rgba(0,0,0,0.4);
+      padding-top: 60px;
+      transition: opacity 0.3s ease;
+    }
+    .modal-content {
+      background-color: var(--background-form-cadastro);
+      margin: 5% auto; 
+      padding: 20px;
+      width: 40%;
+      position: relative;
+      border-radius: 15px;
+      box-shadow: var(--shadow-box);
+    }
+    .close {
+      color: #aaa;
+      top: 0;
+      right: 15px;
+      position: absolute;
+      font-size: 28px;
+      font-weight: bold;
+    }
+    .close:hover,
+    .close:focus {
+      color: var(--text-color);
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+  .calendar a {
+    text-decoration: none;
+    color: var(--text-color);
+  }
+
+  .calendar a:hover{
+    cursor: pointer;
+    text-decoration: underline;
+  }
+
+  .contingencia-calendar {
+    background-color: var(--background-form-cadastro);
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: var(--shadow-box);
+    max-width: 1100px;
+    margin: 10px auto;
+    border: 1px solid var(--linha-nav);
+    transition: all 0.3s;
+  }
+
+  button {
+    margin-bottom: 10px;
+  }
+
+  .btn-calendario {
+    background-color: #2C3D4F;
+    color: white;
+    border-radius: 5px;
+  }
+
+  .btn-calendario:hover {
+    background-color: #1A252F;
+    color: white;
+  }
+</style>
+
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.14/index.global.min.js'></script>
+
+<div id="eventModal" class="modal">
+  <div class="modal-content">
+    <span class="close" id="closeModal">&times;</span>
+    <h2 id="eventTitle"></h2>
+    <p id="eventNomeC"></p>
+    <p id="eventTime"></p>
+    <p id="eventCPF"></p>
+  </div>
+</div>
+<main>
+  <div class="contingencia-calendar">
+    <form action="{% url 'marcar_calendario' %}" method="GET">
+      <button class="btn btn-calendario">Marcar Cliente</button>
+    </form>
+    <div class="calendar" id="calendar"></div>
+  </div>
+</main>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  var calendarEl = document.getElementById('calendar');
+
+  var calendar = new FullCalendar.Calendar(calendarEl, {
+    initialView: 'dayGridMonth',
+    locale: 'pt-br',
+    buttonText: {
+      today: 'Hoje',
+      month: 'Mês',
+      week: 'Semana',
+      day: 'Dia',
+      list: 'Lista'
+    },
+    headerToolbar: {
+      left: 'prev,next today',
+      center: 'title',
+      right: 'dayGridMonth,timeGridWeek,timeGridDay,listMonth'
+    },
+    dateClick: function(info) {
+      calendar.changeView('timeGridDay', info.dateStr);
+    },
+    noEventsContent: 'Nenhum evento para mostrar',
+    events: [
+      {% for dataretorno in dataretornos %}
+      {
+        title: "{{ dataretorno.cliente.nomeS }}",
+        start: "{{ dataretorno.data|date:'Y-m-d' }} {{ dataretorno.hora }}",
+        extendedProps: {
+          cpf: "{{ dataretorno.cliente.cpf }}",
+          hora: "{{ dataretorno.hora }}",
+          nome: "{{ dataretorno.cliente.nome }}"
+        }
+      },
+      {% endfor %}
+    ],
+    eventClick: function(info) {
+      document.getElementById('eventTitle').innerText = info.event.title;
+      document.getElementById('eventTime').innerText = 'Hora: ' + info.event.extendedProps.hora;
+      document.getElementById('eventCPF').innerText = 'CPF: ' + info.event.extendedProps.cpf;
+      document.getElementById('eventNomeC').innerText = 'Nome Completo: ' + info.event.extendedProps.nome;
+
+      // Mostrar o modal
+      var modal = document.getElementById("eventModal");
+      modal.style.display = "block";
+    }
+  });
+
+  calendar.render();
+
+
+  $(window).on('resize', function() {
+    if ($(window).width() <= 768) {
+      $('.fc-toolbar.fc-header-toolbar').addClass('row col-lg-12');
+    } else {
+      $('.fc-toolbar.fc-header-toolbar').removeClass('row col-lg-12');
+    }
+  });
+
+  $(document).ready(function() {
+    if ($(window).width() <= 768) {
+      $('.fc-toolbar.fc-header-toolbar').addClass('row col-lg-12');
+    }
+  });
+
+
+  document.getElementById("closeModal").onclick = function() {
+    var modal = document.getElementById("eventModal");
+    modal.style.display = "none";
+  }
+
+
+  window.onclick = function(event) {
+    var modal = document.getElementById("eventModal");
+    if (event.target == modal) {
+      modal.style.display = "none";
+    }
+  }
+});
+</script>
+<p></p>
+
+{% endblock %}

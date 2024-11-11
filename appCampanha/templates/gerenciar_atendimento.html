@@ -1,0 +1,146 @@
+{% extends 'index.html' %}
+{% load my_filters %}
+{% block content %}
+
+<main>
+    <div class="form-row">
+        <div class="card card-body cdiv col-md-6 offset-md-3">
+            <h1 class="text-center">Gerenciar Atendimento</h1>
+            <br>
+
+            <p><strong>Cliente:</strong> {% with assunto.clienteEscolhido.nome|split as nomes %}{{nomes.0|capitalize_words }} {{ nomes.1|capitalize_words }} {% endwith %} -
+                {{assunto.clienteEscolhido.cpf }}</p>
+            <p><strong>Status:</strong>
+                <span class="status-badge 
+                    {% if assunto.status == 'Pendente' %}status-pendente
+                    {% elif assunto.status == 'Em Atendimento' %}status-em-atendimento
+                    {% elif assunto.status == 'Finalizado' %}status-concluido
+                    {% endif %}">
+                    {{ assunto.get_status_display }}
+                </span>
+            </p>
+            <br>
+            <div class="mb-3">
+                <label for="solucaoT" class="form-label">Assunto</label>
+                <textarea rows="6" cols="50" type="text" class="form-control" name="solucaoT" id="solucaoT" disabled
+                    style="color: var(--text-color)">{{assunto.assuntoT}}</textarea>
+            </div>
+
+            {% if assunto.status == 'Pendente' %}
+            <h3 class="text-center">Iniciar Atendimento</h3>
+            <form method="POST" action="{% url 'gerenciar_atendimento' assunto.id_assunto %}">
+                {% csrf_token %}
+                <button type="submit" name="iniciar" class="btn btn-primary" style="width: 100%;"><i
+                        class="fas fa-play"></i> Iniciar Atendimento</button>
+            </form>
+            {% endif %}
+            <br>
+
+            {% if assunto.status == 'Em Atendimento' %}
+            <h2 class="text-center">Histórico de Observações</h2>
+            <br>
+            <div class="form-group">
+                {% for observacao in observacoes %}
+                <div class="custom-textarea mb-2">
+                    <strong>{{ observacao.data_criacao }} - {{ observacao.atendente.username }}:</strong>
+                    <p class="mb-0">{{ observacao.descricao }}</p>
+                </div>
+                {% if not forloop.last %}
+                <div class="timeline-separator"></div>
+                {% endif %}
+                {% empty %}
+                <div class="custom-textarea mb-2">
+                    <p>Nenhuma cadastrada.</p>
+                </div>
+                {% endfor %}
+            </div>
+            <br>
+
+            <h2 class="text-center">Adicionar Observação</h2>
+            <br>
+            <form method="POST" action="{% url 'gerenciar_atendimento' assunto.id_assunto %}">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="descricao">Nova Observação:</label>
+                    <textarea class="form-control" id="descricao" name="descricao" rows="3" required></textarea>
+                </div>
+                <p></p>
+                <button type="submit" class="btn btn-primary" style="width: 100%;"><i class="fas fa-plus-circle"></i>
+                    Adicionar Observação</button>
+            </form>
+            <br>
+
+            <h3 class="text-center">Finalizar Atendimento?</h3>
+            <button class="btn btn-danger" id="openModal"><i class="fas fa-stop-circle"></i>
+                Finalizar Atendimento</button>
+
+
+            <div id="finalizarModal" class="modal-finalizar hidden">
+                <div class="modal-finalizar-content">
+                    <div class="row">
+                        <span class="close-finalizar" id="closeModal">&times;</span>
+                        <h2 class="text-center">Motivo da Finalização</h2>
+                        <form method="POST" action="{% url 'finalizar_atendimento' assunto.id_assunto %}">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <textarea class="form-control" name="motivo_finalizacao" rows="5" required
+                                    placeholder="Insira o motivo da finalização..."></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="solucionado">Status da Solução:</label>
+                                <div class="solution-options">
+                                    <label class="solution-option">
+                                        <input type="radio" name="solucionado" value="Não Solucionado" required> Não
+                                        Solucionado
+                                    </label>
+                                    <label class="solution-option">
+                                        <input type="radio" name="solucionado" value="Parcialmente Solucionado"
+                                            required> Parcialmente Solucionado
+                                    </label>
+                                    <label class="solution-option">
+                                        <input type="radio" name="solucionado" value="Solucionado" required> Solucionado
+                                    </label>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-danger" style="width: 100%;"><i
+                                    class="fas fa-check-circle"></i> Confirmar Finalização</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            {% endif %}
+        </div>
+    </div>
+</main>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var modal = document.getElementById('finalizarModal');
+        var openModalButton = document.getElementById('openModal');
+        var closeModalButton = document.getElementById('closeModal');
+
+        // Abrir modal com animação
+        openModalButton.onclick = function () {
+            modal.classList.add('show');
+            modal.style.display = 'block';
+        }
+
+        // Fechar modal com animação
+        closeModalButton.onclick = function () {
+            modal.classList.remove('show');
+            setTimeout(() => modal.style.display = 'none', 300); // Esconde após a animação
+        }
+
+        // Fechar modal ao clicar fora do conteúdo
+        window.onclick = function (event) {
+            if (event.target == modal) {
+                modal.classList.remove('show');
+                setTimeout(() => modal.style.display = 'none', 300); // Esconde após a animação
+            }
+        }
+
+    });
+
+</script>
+{% endblock %}

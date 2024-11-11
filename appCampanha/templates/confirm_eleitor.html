@@ -1,0 +1,26 @@
+{% extends 'index.html' %}
+
+{% block content %}
+
+
+<main>
+
+    <div class="form-group row">
+        <div class="col-md-5 offset-md-3">
+            <form class="card card-body" action="{% url 'apagar_eleitor' usuario_id=usuario.id_usuario %}" method="POST">
+                {% csrf_token %}
+                <fieldset>
+                    {% csrf_token %}
+                    <h2>Tem certeza que deseja apagar este Eleitor?</h2>
+                    <div class="mb-3">
+                        <p style="color: red;">Isso apagará todos os Assuntos e Soluções desse Eleitor</p>
+                        <label for="clienteNome" class="form-label">Eleitor</label>
+                        <input type="text" id="clienteApagar" name="clienteApagar" value="{{usuario.nome}}" class="form-control" disabled>
+                    </div>
+                    <button type="submit" class="btn btn-danger" style="float: right;">Apagar</button>
+                </fieldset>
+            </form>
+        </div>
+    </div>
+</main>
+{% endblock %}

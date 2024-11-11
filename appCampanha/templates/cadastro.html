@@ -1,0 +1,47 @@
+{% extends 'index.html' %}
+
+{% load static %}
+
+{% block content %}
+
+<div id="loadingPopup" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 9999; background-color: rgba(0, 0, 0, 0.5); width: 100vw; height: 100vh;">
+  <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center;">
+      <img src="{% static 'img/loading.gif' %}" alt="Carregando..." style="background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center;
+      min-height: 40vh;
+      background-attachment: fixed;">
+      <p style="color: white; font-weight: 700;">Carregando...</p>
+  </div>
+</div>
+
+
+<main>
+        <div class="form-row">
+            <div class="form-group col-md-6 offset-md-3">
+              <form class="card card-body" action="{% url 'cadastro' %}" method="POST" name="CadastroForm" id="CadastroForm">
+                    {% csrf_token %}
+                    <h1 class="text-center">Cadastro</h1>
+                    <div class="form-group col-md-12">
+                      <label for="cpf" class="form-label">CPF</label>
+                      <input type="text" class="form-control" name="cpf" id="cpf" required="required" autocomplete="off" placeholder="123.456.789-10"/>
+                    </div>
+                    <p></p>
+                    <div class="form-group col-md-12">
+                      <label for="dataN" class="form-label">Data de Nascimento</label>
+                      <input type="date" class="form-control" name="dataN" id="dataN" required="required" autocomplete="off" onchange="validarData()" placeholder="01/02/2003"/>
+                    </div>
+                  <div class="form-groupcol-md-12">
+                    <p></p>
+                    <button type="submit" class="btn btn-primary" style="float: right; width: 100%; margin-top: 20px;" id="btnSubmit">Enviar</button>
+                  </div>
+                </form>
+            </div>
+        </div>
+        <p style="text-align: center; margin-top: 20px;">{{cpfI}}</p>
+             
+</main>
+<script src="{% static 'js/cadastro.js' %}"></script>
+
+{% endblock %}
+

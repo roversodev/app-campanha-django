@@ -1,0 +1,220 @@
+{% extends 'index.html' %}
+
+{% load static %}
+
+{% block content %}
+
+<style>
+h2, h4 {
+    text-align: center;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+p {
+    color: var(--text-color);
+    line-height: 1.6;
+}
+
+ul {
+    padding-left: 0;
+}
+
+li {
+    list-style: none;
+    margin-bottom: 10px;
+}
+
+/* Cartões (Cards) */
+.card {
+    box-shadow: var(--shadow-box);
+    padding: 20px;
+    margin: 20px auto;
+    background-color: var(--background-form-cadastro);
+    border-radius: 15px;
+    border: 1px solid var(--linha-nav);
+    max-width: 800px;
+    transition: all 0.3s ease-in-out;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+/* Assunto e Observações */
+.assunto, .dataretorno, .form-card {
+    background-color: var(--background-form-cadastro);
+    padding: 20px;
+    margin: 20px auto;
+    max-width: 800px;
+    border-radius: 15px;
+    border: 1px solid var(--linha-nav);
+    transition: all 0.3s ease-in-out;
+}
+
+.assunto h4, .dataretorno h4 {
+    text-align: left;
+    color: #007bff;
+}
+
+.separador {
+    display: block;
+    content: "";
+    height: 1px;
+    background-color: #e0e0e0;
+    margin: 1rem 0;
+}
+
+
+.card .icon {
+    color: #007bff;
+    margin-right: 10px;
+    font-size: 1.2em;
+}
+
+@media (max-width: 768px) {
+    .assunto, .dataretorno, .form-card {
+        padding: 15px;
+        margin: 10px auto;
+    }
+}
+
+</style>
+<main>
+    <div class="form-group">
+        <div class="col-md-8 offset-md-2">
+            <!-- Detalhes do Eleitor -->
+            <div class="card">
+                <h2>Detalhes do Eleitor</h2>
+                <h4>{{ usuarios.nome }}</h4>
+                <b>Data de criação do cadastro do Eleitor:</b>
+                <p>{{usuarios.data_criacao}}</p>
+                <b>Quem criou o cadastro:</b>
+                <p>{{usuarios.atendente}}</p>
+            </div>
+
+            <!-- Assuntos Tratados -->
+            <h2>Assuntos Tratados</h2>
+            {% for assunto in assuntos %}
+            <div class="assunto card">
+                <h4><i class="icon fas fa-briefcase"></i> Assunto:</h4>
+                <b>Título:</b>
+                <p>{{ assunto.assuntoT }}</p>
+
+                <b>Data de Criação:</b>
+                <p>{{ assunto.data_criacao }}</p>
+
+                <b>Cadastrado por:</b>
+                <p>{{ assunto.atendente.username }}</p>
+
+                <b>Status:</b>
+                <p>{{ assunto.status }}</p>
+
+                <h4 class="text-center"><i class="icon fas fa-comments"></i> Observações:</h4>
+                {% if assunto.observacoes.exists %}
+                <ul>
+                    {% for observacao in assunto.observacoes.all %}
+                    <li>
+                        <b>Descrição:</b>
+                        <p>{{ observacao.descricao }}</p>
+                        <b>Data de Criação:</b>
+                        <p>{{ observacao.data_criacao }}</p>
+                        <b>Cadastrado por:</b>
+                        <p>{{ observacao.atendente.username }}</p>
+                    </li>
+                    {% if not forloop.last %}
+                        <hr class="separador">
+                    {% endif %}
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p>Nenhuma observação cadastrada.</p>
+                {% endif %}
+
+                {% if assunto.status == 'Finalizado' %}
+                <h4 class="text-center"><i class="icon fas fa-check-circle"></i> Finalização</h4>
+                <b>Motivo:</b>
+                <p>{{ assunto.motivo_finalizacao }}</p>
+
+                <b>Finalizado por:</b>
+                <p>{{ assunto.finalizado_por.username }}</p>
+
+                <b>Data da Finalização:</b>
+                <p>{{ assunto.data_finalizacao }}</p>
+
+                <b>Solucionado:</b>
+                <p>{{ assunto.solucionado }}</p>
+                {% endif %}
+            </div>
+            <br>
+            {% empty %}
+            <div class="assunto card">
+                <b>Nenhum Assunto Cadastrado.</b>
+            </div>
+            {% endfor %}
+
+            <!-- Datas Marcadas -->
+            <h2>Datas Marcadas</h2>
+            {% for dataretorno in dataretornos %}
+            <div class="dataretorno card">
+                <b><i class="icon fas fa-calendar-alt"></i> Data:</b>
+                <p>{{ dataretorno.data }}</p>
+                <b><i class="icon fas fa-clock"></i> Hora:</b>
+                <p>{{ dataretorno.hora }}</p>
+                <b><i class="icon fas fa-user"></i> Quem Marcou:</b>
+                <p>{{ dataretorno.atendente }}</p>
+            </div>
+            {% empty %}
+            <div class="dataretorno card">
+                <p>Nenhuma data de retorno cadastrada.</p>
+            </div>
+            {% endfor %}
+            <br>
+
+            <!-- Formulário de Edição -->
+            <form class="form-card card" action="{% url 'editar_eleitor' usuario_id=usuarios.id_usuario %}" method="GET">
+                <h1 class="text-center"><i class="icon fas fa-user-edit"></i> Dados Pessoais</h1>
+                <div class="form-group col-md-12">
+                    <label for="nome" class="form-label">Nome Completo</label>
+                    <input type="text" class="form-control" name="nome" id="nome" required="required"
+                        autocomplete="off" value="{{ usuarios.nome }}" disabled />
+                </div>
+                <div class="form-group col-md-12">
+                    <label for="nomeS" class="form-label">Nome Social</label>
+                    <input type="text" class="form-control" name="nomeS" id="nomeS" required="required"
+                        autocomplete="off" value="{{ usuarios.nomeS }}" disabled />
+                </div>
+                <div class="form-group col-md-12">
+                    <label for="telefone" class="form-label">Telefone</label>
+                    <input type="text" class="form-control" name="telefone" id="telefone" required="required"
+                        autocomplete="off" value="{{ usuarios.telefone }}" disabled />
+                </div>
+                <div class="form-group col-md-12">
+                    <label for="cpf" class="form-label">CPF</label>
+                    <input type="text" class="form-control" name="cpf" id="cpf" required="required"
+                        autocomplete="off" value="{{ usuarios.cpf }}" disabled />
+                </div>
+                <div class="form-group col-md-12">
+                    <label for="dataN" class="form-label">Data de Nascimento</label>
+                    <input type="date" class="form-control" name="dataN" id="dataN" required="required"
+                        autocomplete="off" value="{{ usuarios.dataN|date:'Y-m-d' }}" disabled />
+                </div>
+                <p></p>
+                <div class="form-group col-md-12">
+                    <fieldset disabled>
+                        <label for="disabledTextInput" class="form-label">Gênero</label>
+                        <input type="text" id="disabledTextInput" class="form-control"
+                            placeholder="{{ usuarios.genero }}">
+                    </fieldset>
+                </div>
+                <p></p>
+                <button type="submit" class="btn btn-warning">
+                    <i class="fas fa-edit"></i> Editar cadastro
+                </button>
+            </form>
+        </div>
+    </div>
+</main>
+
+
+{% endblock %}

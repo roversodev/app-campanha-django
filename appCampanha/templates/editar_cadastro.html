@@ -1,0 +1,191 @@
+{% extends 'index.html' %}
+{% load static %}
+{% block content %}
+<style>
+  /* Estilos para os blocos de endereço */
+  .address-block {
+    background-color: var(--item-back);
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    transition: box-shadow 0.3s ease;
+  }
+
+  .address-block:hover {
+    box-shadow: var(--shadow-box);
+  }
+
+  /* Texto do endereço */
+  .address-block p {
+    margin: 0;
+    color: var(--text-color);
+  }
+
+  /* Endereço principal destacado */
+  .address-block strong {
+    color: #007bff;
+    font-weight: 600;
+    display: block;
+    margin-bottom: 10px;
+  }
+
+  /* Botões de ação */
+  .address-actions {
+    margin-top: 10px;
+  }
+
+  .address-actions a,
+  .address-actions button {
+    margin-right: 10px;
+    padding: 8px 12px;
+    font-size: 0.9rem;
+  }
+
+
+
+  /* Estilos do Modal */
+  .modal-excluir {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+
+  .modal-excluir-conteudo {
+    background-color: var(--background-form-cadastro);
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid var(--linha-nav);
+    width: 80%;
+    max-width: 500px;
+    border-radius: 15px;
+    box-shadow: var(--shadow-box);
+  }
+
+
+
+  .cdiv input {
+    border-radius: 30px;
+    padding-left: 15px;
+  }
+</style>
+<main>
+  <div class="form-row">
+    <div class="cdiv col-md-6 offset-md-3">
+      <form action="{% url 'editar_eleitor' usuario_id=usuario.id_usuario %}" method="POST" name="CadastroForm"
+        id="CadastroForm">
+        {% csrf_token %}
+        <h1 class="text-center">Editar Cadastro</h1>
+
+        <!-- Campos de informações pessoais -->
+        <div class="form-group col-md-12">
+          <label for="nome" class="form-label">Nome Completo <span class="required">*</span></label>
+          <input type="text" class="form-control" name="nome" id="nome" required="required"
+            placeholder="Insira seu Nome Completo..." autocomplete="off" value="{{ usuario.nome }}" disabled />
+        </div>
+        <div class="form-group col-md-12">
+          <label for="nomeS" class="form-label">Nome Social</label>
+          <input type="text" class="form-control" name="nomeS" id="nomeS" placeholder="Insira seu Nome Social..."
+            autocomplete="off" value="{{ usuario.nomeS }}" />
+        </div>
+        <div class="form-group col-md-12">
+          <label for="telefone" class="form-label">Telefone <span class="required">*</span></label>
+          <input type="text" class="form-control" name="telefone" id="telefone" required="required"
+            placeholder="Insira seu Telefone..." autocomplete="off" value="{{ usuario.telefone }}" />
+        </div>
+        <br>
+        <div class="form-group col-md-12">
+          <button type="submit" class="btn btn-primary" style="float: right; width: 100%;">Salvar Alterações</button>
+        </div>
+      </form>
+      <br>
+      <br>
+
+      <!-- Resumo do endereço -->
+      <h2 class="mt-4 text-center">Endereços</h2>
+      {% for endereco in usuario.enderecos.all %}
+      <div class="address-block">
+        <div style="display: flex; align-items: center;">
+          {% if endereco.tipo_endereco == 'Caixa Postal' %}
+          <i class="ph ph-bold ph-envelope-simple" style="font-size: 24px; margin-right: 10px;"></i>
+          {% elif endereco.tipo_endereco == 'Residencial' %}
+          <i class="ph ph-bold ph-house-line" style="font-size: 24px; margin-right: 10px;"></i>
+          {% elif endereco.tipo_endereco == 'Comercial' %}
+          <i class="ph ph-bold ph-buildings" style="font-size: 24px; margin-right: 10px;"></i>
+          {% endif %}
+          <div>
+            {% if endereco.principal %}
+            <strong>Principal</strong>
+            {% endif %}
+            <p>{{ endereco.endereco }}, {{ endereco.numero }} - {{ endereco.bairro }} - {{ endereco.estado }}</p>
+          </div>
+        </div>
+        <div class="address-actions">
+          <a href="{% url 'editar_endereco' endereco.id %}" class="btn btn-warning btn-sm">Editar</a>
+          <a href="javascript:void(0);" class="btn btn-danger btn-sm"
+            onclick="abrirModalExcluir({{ endereco.id }}, '{{ endereco.endereco|escapejs }}')">Excluir</a>
+        </div>
+      </div>
+      <p></p>
+      {% endfor %}
+      <p></p>
+      <div class="form-group">
+        <a href="{% url 'adicionar_endereco' usuario.id_usuario %}" class="btn btn-success" style="width: 100%;">+
+          Adicionar Novo Endereço</a>
+      </div>
+    </div>
+    <p></p>
+  </div>
+  </div>
+
+
+
+  <div id="modal-excluir-endereco" class="modal-excluir">
+    <div class="modal-excluir-conteudo">
+      <h2 class="text-center">Confirmar Exclusão</h2>
+      <p>Você tem certeza de que deseja excluir o endereço "<span id="endereco-info"></span>"?</p>
+      <form id="form-excluir-endereco" method="POST" action="">
+        {% csrf_token %}
+        <input type="hidden" name="endereco_id" id="endereco-id" value="">
+        <div style="display: flex; justify-content: space-between;">
+          <button type="submit" class="btn btn-danger">Confirmar Exclusão</button>
+          <button type="button" class="btn btn-secondary" onclick="fecharModalExcluir()">Cancelar</button>
+        </div>
+      </form>
+    </div>
+
+  </div>
+</main>
+<script src="{% static 'js/cadastro2.js' %}"></script>
+<script>
+  function abrirModalExcluir(enderecoId, enderecoTexto) {
+    document.getElementById('endereco-info').innerText = enderecoTexto;
+    document.getElementById('endereco-id').value = enderecoId;
+
+    // Define a URL correta para o formulário de exclusão
+    const form = document.getElementById('form-excluir-endereco');
+    form.action = `/excluir-endereco/${enderecoId}/`;
+
+    document.getElementById('modal-excluir-endereco').style.display = 'block';
+  }
+
+  function fecharModalExcluir() {
+    document.getElementById('modal-excluir-endereco').style.display = 'none';
+  }
+
+  // Fecha o modal ao clicar fora do conteúdo
+  window.onclick = function (event) {
+    const modal = document.getElementById('modal-excluir-endereco');
+    if (event.target === modal) {
+      fecharModalExcluir();
+    }
+  };
+</script>
+
+{% endblock %}

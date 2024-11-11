@@ -1,0 +1,357 @@
+{% extends 'index.html' %}
+
+{% load static %}
+
+{% load my_filters %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/home.css' %}">
+<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+
+
+<div id="custom-confirm" class="confirm-container">
+    <div class="confirm-box">
+        <p id="confirm-message" style="margin-bottom: 0;">Tem certeza que deseja apagar todas as senhas?</p>
+        <p id="confirm-message" style="color: rgb(149, 0, 0);">Isso apagará todas as informações desse relatório</p>
+        <button class="confirm-button" onclick="confirmAction()">Sim</button>
+        <button class="cancel-button" onclick="cancelAction()">Cancelar</button>
+    </div>
+</div>
+
+
+<div class="content">
+    <main>
+        <div class="header">
+            <div class="left">
+                <h1>Relatório Senhas</h1>
+                <ul class="breadcrumb">
+                    <li><a href="#">
+                            Todo o período
+                        </a></li>
+            </div>
+            <a href="#" class="report" onclick="event.preventDefault(); showCustomConfirm()">
+                <i class='bx bx-trash'></i>
+                <span>Apagar Senhas</span>
+            </a>
+            {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                <div class="alert {{ message.tags }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Insights -->
+        <ul class="insights">
+            <li>
+                <i class='bx bx-file'></i>
+                <span class="info">
+                    <h3>{{ total_senhas }}</h3>
+                    <p>Emitidas</p>
+                </span>
+            </li>
+            <li>
+                <i class='bx bx-check-circle' style="background-color: var(--light-success); color: var(--success);"></i>
+                <span class="info">
+                    <h3>{{ total_atendidas }}</h3>
+                    <p>Atendidas</p>
+                </span>
+            </li>
+            <li>
+                <i class='bx bx-hourglass' style="background-color: var(--light-warning); color: var(--warning);"></i>
+                <span class="info">
+                    <h3>{{ total_pendentes }}</h3>
+                    <p>Pendentes</p>
+                </span>
+            </li>
+
+            <li>
+                <i class='bx bx-time-five'></i>
+                <span class="info">
+                    <h3>{{ tempo_medio }}</h3>
+                    <p>Tempo de Espera</p>
+                </span>
+            </li>
+        </ul>
+
+        <!-- End of Insights -->
+
+        <div class="bottom-data">
+            <div class="orders">
+                <div class="header">
+                    <i class='bx bx-calendar'></i>
+                    <h3>Atendidas por Dia</h3>
+                </div>
+                <canvas id="graficoSenhas"></canvas>           
+            </div>
+
+            <!-- Reminders -->
+            <div class="orders">
+                <div class="header">
+                    <i class='bx bx-chart'></i>
+                    <h3>Total do Sistema</h3>
+                </div>
+                <canvas id="senhasChart"></canvas>
+            </div>
+            <div class="orders">
+
+                <div class="header">
+                    <i class='bx bx-time-five'></i>
+                    <h3>Atendidas por Hora</h3>
+                </div>
+                <canvas id="graficoHoras"></canvas>
+            </div>
+
+            <div class="orders" style="max-height: 400px;">
+                <div class="header">
+                    <i class='bx bx-list-ul'></i>
+                    <h3>Senhas de Hoje</h3>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Número</th>
+                            <th>Criação</th>
+                            <th>Espera</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for senha in ultimas_senhas %}
+                        <tr>
+                            <td>{{ senha.numero }}</td>
+                            <td>{{ senha.data_criacao|date:"H:i" }}</td>
+                            {% if senha.chamada %}
+                            <td>{{ senha.tempo_espera }}</td>
+                            <td><span class="status completed">Atendida</span></td>
+                            {% else %}
+                            <td>X</td>
+                            <td><span class="status pending">Pedente</span></td>
+                            {% endif %}
+                            {% empty %}
+                            <td colspan="4">Nenhuma senha criada hoje.</td>
+                            {% endfor %}
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+
+            <div class="orders">
+                <div class="header">
+                    <i class='bx bx-user'></i>
+                    <h3>Senhas por Usuários</h3>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Atendente</th>
+                            <th>Senhas Chamadas</th>
+                            <th>Tempo Médio de Espera</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for atendente in desempenho %}
+                        <tr>
+                            <td>{{ atendente.username }}</td>
+                            <td>{{ atendente.senha_count }}</td>
+                            <td>{{ atendente.tempo_medio_espera_formatado }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="3">Nenhum atendimento realizado.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- End of Reminders-->
+
+        </div>
+        <p></p>
+        <br>
+    </main>
+</div>
+
+
+
+<script>
+    function showCustomConfirm() {
+    const confirmBox = document.getElementById('custom-confirm');
+    confirmBox.classList.add('show'); // Mostra o diálogo
+}
+
+// Função executada ao confirmar a ação
+function confirmAction() {
+    // Redireciona para a URL de apagar senhas
+    window.location.href = "{% url 'apagar_senhas' %}";
+}
+
+// Função para cancelar a ação
+function cancelAction() {
+    const confirmBox = document.getElementById('custom-confirm');
+    confirmBox.classList.remove('show'); // Oculta o diálogo
+}
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// Gráfico de Total de Senhas
+const ctx = document.getElementById('senhasChart').getContext('2d');
+const senhasChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: ['Atendidas', 'Pendentes'],
+        datasets: [{
+            label: 'Total de Senhas',
+            data: [{{ total_atendidas }}, {{ total_pendentes }}],
+            backgroundColor: [
+                'rgba(39, 174, 96, 0.6)',  // Verde
+                'rgba(231, 76, 60, 0.6)'    // Vermelho
+            ],
+            borderColor: [
+                'rgba(39, 174, 96, 1)',      // Verde
+                'rgba(231, 76, 60, 1)'       // Vermelho
+            ],
+            borderWidth: 2,
+            hoverBackgroundColor: [
+                'rgba(39, 174, 96, 0.8)',
+                'rgba(231, 76, 60, 0.8)'
+            ],
+            hoverBorderColor: [
+                'rgba(39, 174, 96, 1)',
+                'rgba(231, 76, 60, 1)'
+            ]
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            title: {
+                display: false,
+                text: 'Total de Senhas',
+                font: {
+                    size: 18
+                }
+            },
+            legend: {
+                display: false // Oculta a legenda se não for necessária
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                title: {
+                    display: true,
+                    text: 'Quantidade'
+                }
+            },
+            x: {
+                title: {
+                    display: true,
+                    text: 'Tipo de Senha'
+                }
+            }
+        }
+    }
+});
+
+// Gráfico de Senhas Atendidas ao Longo do Tempo
+const ctx1 = document.getElementById('graficoSenhas').getContext('2d');
+const graficoSenhas = new Chart(ctx1, {
+    type: 'line',
+    data: {
+        labels: {{ labels| safe }},
+        datasets: [{
+            label: 'Senhas Atendidas',
+            data: {{ data| safe }},
+            backgroundColor: 'rgba(30, 144, 255, 0.5)',
+            borderColor: 'rgba(30, 144, 255, 1)',
+            borderWidth: 2,
+            fill: true, // Preencher a área sob a linha
+            tension: 0.4 // Suaviza a linha
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            title: {
+                display: false,
+                text: 'Senhas Atendidas ao Longo do Tempo',
+                font: {
+                    size: 18
+                }
+            },
+            legend: {
+                display: false
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                title: {
+                    display: true,
+                    text: 'Quantidade'
+                }
+            },
+            x: {
+                title: {
+                    display: true,
+                    text: 'Período'
+                }
+            }
+        }
+    }
+});
+
+// Gráfico de Senhas Atendidas por Hora
+const ctx2 = document.getElementById('graficoHoras').getContext('2d');
+const graficoHoras = new Chart(ctx2, {
+    type: 'bar',
+    data: {
+        labels: {{ labels_horas| safe }},
+        datasets: [{
+            label: 'Senhas Atendidas por Hora',
+            data: {{ data_horas| safe }},
+            backgroundColor: 'rgba(255, 165, 0, 0.5)',
+            borderColor: 'rgba(255, 165, 0, 1)',
+            borderWidth: 2,
+            hoverBackgroundColor: 'rgba(255, 165, 0, 0.8)',
+            hoverBorderColor: 'rgba(255, 165, 0, 1)'
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            title: {
+                display: false,
+                text: 'Senhas Atendidas por Hora',
+                font: {
+                    size: 18
+                }
+            },
+            legend: {
+                display: false
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                title: {
+                    display: true,
+                    text: 'Quantidade'
+                }
+            },
+            x: {
+                title: {
+                    display: true,
+                    text: 'Hora'
+                }
+            }
+        }
+    }
+});
+
+</script>
+
+{% endblock %}

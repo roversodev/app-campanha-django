@@ -1,0 +1,209 @@
+{% extends 'index.html' %}
+
+{% load static %}
+
+{% load my_filters %}
+
+{% load permission_tags %}
+
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'css/home.css' %}">
+<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+<script src="https://unpkg.com/htmx.org@1.9.2"></script>
+
+<div id="custom-alert" class="alert-container">
+    <div class="alert-box">
+        <p id="alert-message"><strong>Mensagem do alerta</strong></p>
+        <button class="alert-button" onclick="closeAlert()">OK</button>
+    </div>
+</div>
+
+<div class="content">
+    <main>
+        <div class="header">
+            <div class="left">
+                <h1>Brasil Faria de Sá</h1>
+                <ul class="breadcrumb">
+                    <li><a href="#">
+                            Ultimos 7 dias
+                        </a></li>
+            </div>
+            {% if user|has_role:'atendente' or user|has_role:'staff' %}
+            <a style="cursor: pointer;" class="report">
+                <i class='bx bx-bell'></i>
+                <span>Chamar Senha</span>
+            </a>
+            {% endif %}
+        </div>
+
+        <!-- Insights -->
+        <ul class="insights">
+            <!-- Cadastros (Eleitores) -->
+            <li data-url="{% url 'eleitores' %}" onclick="redirectToPage(this)">
+                <i class='bx bx-user'></i>
+                <span class="info">
+                    <h3>{{ total_eleitores }}</h3>
+                    <p>Eleitores</p>
+                </span>
+            </li>
+
+            <!-- Assuntos -->
+            <li data-url="{% url 'assuntos' %}" onclick="redirectToPage(this)">
+                <i class='bx bx-conversation'></i>
+                <span class="info">
+                    <h3>{{ total_assuntos }}</h3>
+                    <p>Assuntos</p>
+                </span>
+            </li>
+
+            <!-- Soluções -->
+            <li data-url="{% url 'assuntos' %}" onclick="redirectToPage(this)">
+                <i class='bx bx-bulb'></i>
+                <span class="info">
+                    <h3>{{ total_solucoes }}</h3>
+                    <p>Soluções</p>
+                </span>
+            </li>
+
+            <!-- Dataretornos (Calendário) -->
+            <li data-url="{% url 'calendario_resumo' %}" onclick="redirectToPage(this)">
+                <i class='bx bx-calendar'></i> <!-- Ícone de calendário para Dataretornos -->
+                <span class="info">
+                    <h3>{{ total_dataretornos }}</h3>
+                    <p>Calendário</p>
+                </span>
+            </li>
+        </ul>
+
+        <!-- End of Insights -->
+
+        <div class="bottom-data">
+            <div class="orders">
+                <div class="header">
+                    <i class='bx bx-receipt'></i>
+                    <h3>Cadastros Recentes</h3>
+                    <i class='bx bx-plus' onclick="cadastrarNovo()"></i>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>CPF</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for eleitor in eleitores %}
+                            <tr data-url="{% url 'relatorio_eleitor' usuario_id=eleitor.id_usuario %}"
+                                onclick="redirectToReport(this)">
+                                <td>
+                                    <p>{% with eleitor.nome|split as nomes %}
+                                        {{ nomes.0|capitalize_words }} {{ nomes.1|capitalize_words }}
+                                        {% endwith %}</p>
+                                </td>
+                                <td>{{eleitor.cpf}}</td>
+                                <td><span class="status completed">Cadastrado</span></td>
+                                {% empty %}
+                                <td colspan="3">Nenhum cadastro</td>
+                                {% endfor %}
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Reminders -->
+            <div class="reminders">
+                <div class="header">
+                    <i class='bx bx-calendar'></i>
+                    <h3>Calendário</h3>
+                    <i class='bx bx-plus' onclick="marcarCalendario()"></i>
+                </div>
+                <ul class="task-list">
+                    {% for datar in agendamentos_hoje %}
+                    <li class="completed">
+                        <div class="task-title">
+                            <i class='bx bx-check-circle'></i>
+                            <p>{% with datar.cliente.nome|split as nomes %}
+                                {{ nomes.0|capitalize_words }} {{ nomes.1|capitalize_words }}
+                                {% endwith %}|</p>
+                            <p>{{ datar.hora }} |</p>
+                            <p>{{ datar.data|date:"d/m/Y" }}</p>
+                        </div>
+                        <i class='bx bx-dots-vertical-rounded'></i>
+                    </li>
+                    {% empty %}
+                    <li class="completed">
+                        <div class="task-title">
+                            <i class='bx bx-check-circle'></i>
+                            <p>Nenhum agendamento cadastrado</p>
+                        </div>
+                        <i class='bx bx-dots-vertical-rounded'></i>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <!-- End of Reminders-->
+
+        </div>
+    </main>
+</div>
+
+
+<script>
+    // Função para mostrar o alerta
+    function showAlert(message) {
+        const alertBox = document.getElementById('custom-alert');
+        document.getElementById('alert-message').textContent = message; // Define a mensagem do alerta
+        alertBox.classList.add('show'); // Mostra o alerta
+    }
+
+    // Função para fechar o alerta
+    function closeAlert() {
+        const alertBox = document.getElementById('custom-alert');
+        alertBox.classList.remove('show'); // Oculta o alerta
+    }
+
+</script>
+
+<script>
+    window.addEventListener('load', () => {
+        document.querySelector('.content').classList.add('fade-in');
+    });
+
+
+    document.querySelector('.report').addEventListener('click', () => {
+        fetch('{% url "chamar_senha" %}')
+            .then(response => response.json())
+            .then(data => {
+                if (data.numero) {
+                    showAlert('Sua senha é: ' + data.numero);
+                } else {
+                    showAlert(data.erro);
+                }
+            });
+    });
+
+
+
+    function marcarCalendario() {
+        window.location.href = "{% url 'marcar_calendario' %}";
+    }
+
+    function cadastrarNovo() {
+        window.location.href = "{% url 'cadastro' %}";
+    }
+
+    function redirectToPage(element) {
+        const url = element.getAttribute('data-url');
+        window.location.href = url;
+    }
+
+    function redirectToReport(element) {
+        const url = element.getAttribute('data-url');
+        window.location.href = url;
+    }
+</script>
+
+{% endblock %}
