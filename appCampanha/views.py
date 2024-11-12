@@ -502,7 +502,6 @@ def login(request):
         username = request.POST['username']
         password = request.POST['password']
         user = authenticate(username=username, password=password)
-        
         if user is not None:
             auth_login(request, user)
             extra = {
@@ -532,7 +531,7 @@ def login(request):
                 'ip_address': request.META.get('REMOTE_ADDR')
             }
             logger.warning('Tentou Logar com Usuario ou senha inválida', extra=extra)
-            return render(request, 'login.html', {'form': AuthenticationForm, 'error': 'E-mail ou Senha inválido'})
+            return render(request, 'login.html', {'form': AuthenticationForm, 'error': 'Usuário ou Senha inválidos'})
 
 
 

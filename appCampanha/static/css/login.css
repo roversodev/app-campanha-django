@@ -372,6 +372,8 @@
   @media (max-width: 570px) {
     form {
       padding: 0 1.5rem;
+      grid-row: inherit;
+      margin-top: -100px;
     }
   
     .image {
@@ -382,6 +384,11 @@
     }
     .container3 {
       padding: 1.5rem;
+      overflow: hidden;
+    }
+
+    body {
+      overflow: hidden;
     }
   
     .container3:before {

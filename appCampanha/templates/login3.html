@@ -1,0 +1,79 @@
+{% extends 'index.html' %}
+
+{% block content %}
+
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'css/login.css' %}">
+
+<div class="container3">
+    <div class="forms-container3">
+      <div class="signin-signup">
+        <form action="{% url 'login' %}" method="POST" class="sign-in-form">
+            {% csrf_token %}
+          <h2 class="title">Login</h2>
+          <div class="input-field">
+            <i class="fas fa-user"></i>
+            <input type="text" name="username" id="username" placeholder="Usuario" value="{{request.POST.username}}" required />
+          </div>
+          <div class="input-field">
+            <i class="fas fa-lock"></i>
+            <input type="password" name="password" id="password" placeholder="Senha" required />
+            <span id="toggle-password" onclick="mostrarSenha()">Mostrar</span>
+          </div>
+          <input type="hidden" name="next" value="{{ request.GET.next }}">
+          <input type="submit" value="Login" class="btn2 solid" />
+          <p class="social-text" style="color: red;">{{error}}</p>
+        </form>
+        <form action="{% url 'login_eleitor' %}" method="post" class="sign-up-form">
+            {% csrf_token %}
+          <h2 class="title">Acompanhar</h2>
+          <div class="input-field">
+            <i class="fas fa-user"></i>
+            <input type="text" placeholder="CPF" id="cpf" name="cpf" required />
+          </div>
+          <div class="input-field">
+            <i class="fas fa-calendar-alt"></i>
+            <input type="date" id="dataN" name="dataN" required/>
+          </div>
+          <input type="submit" class="btn2" value="Entrar" />
+        </form>
+      </div>
+    </div>
+
+    <div class="panels-container3">
+      <div class="panel left-panel">
+        <div class="content">
+          <h3 style="color: white;">É um Eleitor ?</h3>
+          <p style="color: white;">
+            Acompanhe sua solicitação apertando no botão abaixo!
+          </p>
+          <button class="btn2 transparent" id="sign-up-btn2">
+            Acompanhar
+          </button>
+        </div>
+        <img src="/static/img/log.png" class="image" alt="">
+      </div>
+      <div class="panel right-panel">
+        <div class="content">
+          <h3 style="color: white;">Bem-vindo!</h3>
+          <p style="color: white;">
+            Aqui você acompanha todas as suas solicitações conosco!
+          </p>
+          <button class="btn2 transparent" id="sign-in-btn2">
+            Voltar
+          </button>
+        </div>
+         <img src="/static/img/register.png" class="image" alt="">
+      </div>
+    </div>
+  </div>
+
+<script src="{% static 'js/login.js' %}"></script>
+<script>
+  document.addEventListener('contextmenu', function(event) {
+      event.preventDefault();
+  });
+</script>
+
+{% endblock %}
