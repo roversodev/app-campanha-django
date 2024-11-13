@@ -581,6 +581,11 @@ def assuntos_eleitor(request, usuario_id, cpf):
 
 
 
+def privacidade(request):
+    return render(request, 'politica_privacidade.html')
+
+
+
 
 def desmascarar_cpf(cpf):
     return re.sub(r'\D', '', cpf)
@@ -1611,7 +1616,7 @@ def relatorio_usuario(request, user_id):
     else:
         eleitores = Eleitor.objects.all()
 
-    paginator = Paginator(eleitores, 1)  # Mostra 1 eleitor por página
+    paginator = Paginator(eleitores, 1)
     page_number = request.GET.get('page')
     usuarios_page_obj = paginator.get_page(page_number)
 

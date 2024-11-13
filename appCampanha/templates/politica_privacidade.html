@@ -1,0 +1,118 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EasyClerk - Política de Privacidade</title>
+    <link rel="shortcut icon" href="{% static 'img/FS.png' %}">
+    <link rel="stylesheet" href="{% static '/css/privacidade.css' %}" />
+</head>
+
+<body>
+    <header>
+        <div class="container">
+            <h1>Política de Privacidade</h1>
+            <div class="menu-toggle" id="menu-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <nav id="navbar">
+                <ul>
+                    <li><a href="#intro">Introdução</a></li>
+                    <li><a href="#dados-coletados">Dados Coletados</a></li>
+                    <li><a href="#uso-dos-dados">Uso dos Dados</a></li>
+                    <li><a href="#seguranca">Segurança dos Dados</a></li>
+                    <li><a href="#alteracoes">Alterações</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section id="intro" class="section">
+            <div class="container">
+                <h2>Introdução</h2>
+                <p>
+                    Bem-vindo à nossa Política de Privacidade. Aqui explicamos como suas informações são coletadas,
+                    usadas e protegidas ao utilizar nossos serviços.
+                </p>
+            </div>
+        </section>
+
+        <section id="dados-coletados" class="section">
+            <div class="container">
+                <h2>Dados Coletados</h2>
+                <p>
+                    Coletamos diferentes tipos de informações, como dados pessoais e dados de navegação, para melhorar
+                    sua experiência.
+                </p>
+            </div>
+        </section>
+
+        <section id="uso-dos-dados" class="section">
+            <div class="container">
+                <h2>Uso dos Dados</h2>
+                <p>
+                    Os dados coletados são usados para fornecer, manter e melhorar nossos serviços. Nós não
+                    compartilhamos suas informações pessoais com terceiros sem seu consentimento.
+                </p>
+            </div>
+        </section>
+
+        <section id="seguranca" class="section">
+            <div class="container">
+                <h2>Segurança dos Dados</h2>
+                <p>
+                    Utilizamos medidas de segurança padrão do setor para proteger suas informações contra acessos não
+                    autorizados, alterações ou exclusões.
+                </p>
+            </div>
+        </section>
+
+        <section id="alteracoes" class="section">
+            <div class="container">
+                <h2>Alterações na Política de Privacidade</h2>
+                <p>
+                    Podemos alterar esta política de tempos em tempos. Notificaremos você sobre quaisquer mudanças
+                    postando a nova política nesta página.
+                </p>
+            </div>
+        </section>
+        <div class="btn-logind">
+            <a href="{% url 'login' %}" class="btn-login">Voltar para Login</a>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Brasil Faria de Sá - Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript opcional para rolagem suave -->
+    <script>
+        // Rolagem suave
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Menu de hambúrguer
+        const menuToggle = document.getElementById('menu-toggle');
+        const navbar = document.getElementById('navbar');
+
+        menuToggle.addEventListener('click', function () {
+            navbar.classList.toggle('open');
+            menuToggle.classList.toggle('active');
+        });
+    </script>
+</body>
+
+</html>

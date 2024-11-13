@@ -51,6 +51,7 @@ urlpatterns = [
     path("login/", views.login, name="login"),
     path("login-eleitor/", views.login_eleitor, name="login_eleitor"),
     path('assuntos-eleitor/<int:usuario_id>/<str:cpf>/', views.assuntos_eleitor, name='assuntos_eleitor'),
+    path('privacidade', views.privacidade, name='privacidade'),
 
     path("perfil/", views.edit_profile, name="edit_profile"),
     path("alterar_senha/", views.alterar_senha, name="alterar_senha"),
