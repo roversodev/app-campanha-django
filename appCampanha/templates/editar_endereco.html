@@ -1,6 +1,7 @@
 {% extends 'index.html' %}
 {% load static %}
 {% block content %}
+<script src="{% static 'js/buscacep.js' %}"></script>
 <main>
   <div class="form-row">
     <div class="form-group col-md-6 offset-md-3">
@@ -10,13 +11,13 @@
 
         <div class="form-group col-md-12">
           <label for="cep" class="form-label">CEP</label>
-          <input type="text" class="form-control" name="cep" id="cep" required
+          <input type="text" class="form-control" name="txtCep" id="txtCep" required
             value="{{ endereco.cep }}" />
         </div>
 
         <div class="form-group col-md-12">
           <label for="endereco" class="form-label">Endereço</label>
-          <input type="text" class="form-control" name="endereco" id="endereco" required
+          <input type="text" class="form-control" name="endereço" id="endereço" required
             value="{{ endereco.endereco }}" />
         </div>
 
@@ -69,4 +70,5 @@
     </div>
   </div>
 </main>
+<script src="{% static 'js/cadastro2.js' %}"></script>
 {% endblock %}

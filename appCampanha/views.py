@@ -1155,8 +1155,8 @@ def editar_endereco(request, endereco_id):
     endereco = get_object_or_404(Endereco, id=endereco_id)
 
     if request.method == 'POST':
-        endereco.cep = request.POST.get('cep')
-        endereco.endereco = request.POST.get('endereco')
+        endereco.cep = request.POST.get('txtCep')
+        endereco.endereco = request.POST.get('endereço')
         endereco.numero = request.POST.get('numero')
         endereco.complemento = request.POST.get('complemento')
         endereco.bairro = request.POST.get('bairro')
