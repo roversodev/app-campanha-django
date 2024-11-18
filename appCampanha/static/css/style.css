@@ -490,9 +490,8 @@ ul{
     top: 50%;
     transform: translateY(-50%);
     background: linear-gradient(40deg,#ff0080,#ff8c00 70%);
-  ;
     transition: .5s;
-  }
+  } 
   
   input:checked + .slider {
     background-color: #303136;
@@ -505,7 +504,7 @@ ul{
     box-shadow: inset -3px -2px 5px -2px #8983f7, inset -10px -4px 0 0 #a3dafb;
   }
 
-
+ 
 .form-row{
     transition: all 0.3s;
     margin-top: 13px;

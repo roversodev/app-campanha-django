@@ -62,3 +62,5 @@ coverage.xml
 *.egg-info/
 dist/
 build/
+
+conect_servidor.txt

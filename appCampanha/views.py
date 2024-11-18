@@ -224,11 +224,13 @@ def mark_notification_as_read(request, notification_id):
 
 
 
+
 def unread_notifications_count(request):
     if request.user.is_authenticated:
         unread_count = request.user.notifications.unread().count()
         return JsonResponse({'unread_count': unread_count})
     return JsonResponse({'unread_count': 0})
+
 
 
 @login_required
@@ -712,8 +714,8 @@ def home(request):
     
     hoje = datetime.today().date()
     agendamentos_futuros = Dataretorno.objects.filter(data__gte=hoje).order_by('data')
-    agendamentos_futuros_limitados = agendamentos_futuros[:7]
-    eleitores = Eleitor.objects.order_by('-data_criacao')[:7]
+    agendamentos_futuros_limitados = agendamentos_futuros[:5]
+    eleitores = Eleitor.objects.order_by('-data_criacao')[:5]
 
     data_limite = now() - timedelta(days=7)
 
@@ -1104,7 +1106,6 @@ def eleitores(request):
 
 
 
-
 @login_required
 @has_permission_decorator('assunto')
 def editar_eleitor(request, usuario_id):
@@ -1413,11 +1414,27 @@ def gerenciar_atendimento(request, assunto_id):
             descricao = request.POST.get('descricao')
             observacao = Observacao(assunto=assunto, descricao=descricao, atendente=request.user)
             observacao.save()
+
+            user = CustomUser.objects.get(pk=request.user.id)
+            extra = {
+                'user_id': user.id,
+                'username': user.username,
+                'ip_address': request.META.get('REMOTE_ADDR')
+                }    
+            logger.warning('Adicionou uma observação no Assunto ID: %s',assunto_id,extra=extra)
         
         # Se o atendimento foi iniciado, mudar o status
         if assunto.status == 'Pendente':
             assunto.status = 'Em Atendimento'
             assunto.save()
+
+            user = CustomUser.objects.get(pk=request.user.id)
+            extra = {
+                'user_id': user.id,
+                'username': user.username,
+                'ip_address': request.META.get('REMOTE_ADDR')
+                }    
+            logger.warning('Iniciou o atendimento do Assunto ID: %s',assunto_id,extra=extra)
 
         return redirect('gerenciar_atendimento', assunto_id=assunto.id_assunto)
 
@@ -1459,6 +1476,14 @@ def finalizar_atendimento(request, assunto_id):
             verb=f'Finalizei o assunto que você criou, acesse o relatório para verificar! CPF: {assunto.clienteEscolhido.cpf}',
             target=assunto,
         )
+
+        user = CustomUser.objects.get(pk=request.user.id)
+        extra = {
+            'user_id': user.id,
+            'username': user.username,
+            'ip_address': request.META.get('REMOTE_ADDR')
+            }    
+        logger.warning('Finalizou o Assunto ID: %s',assunto_id,extra=extra)
 
     return redirect('assunto_detalhes', assunto_id=assunto_id)
 
