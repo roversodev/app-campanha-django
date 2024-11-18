@@ -1033,6 +1033,14 @@ def adicionar_endereco(request, eleitor_id):
         
         endereco.save()
 
+        user = CustomUser.objects.get(pk=request.user.id)
+        extra = {
+                'user_id': user.id,
+                'username': user.username,
+                'ip_address': request.META.get('REMOTE_ADDR')
+                }    
+        logger.warning('Adicionou um endereço no Eleitor ID: %s',eleitor_id,extra=extra)
+
         if request.session.get('from_cadastro2'):
             del request.session['from_cadastro2']
             return redirect('assunto_inserir', usuario_id=eleitor_id)
@@ -1150,6 +1158,7 @@ def editar_eleitor(request, usuario_id):
             return redirect(reverse('eleitores'))
 
 
+
 @login_required
 @has_permission_decorator('staff')
 def editar_endereco(request, endereco_id):
@@ -1181,6 +1190,18 @@ def editar_endereco(request, endereco_id):
                 endereco.principal = False
 
         endereco.save()
+
+        user = CustomUser.objects.get(pk=request.user.id)
+        extra = {
+                'user_id': user.id,
+                'username': user.username,
+                'ip_address': request.META.get('REMOTE_ADDR')
+                }    
+        logger.warning('Editou o endereço com o ID: %s',endereco_id,extra=extra)
+
+
+
+
         return redirect('editar_eleitor', usuario_id=endereco.eleitor.id_usuario)
 
     return render(request, 'editar_endereco.html', {'endereco': endereco})
@@ -1195,6 +1216,13 @@ def excluir_endereco(request, endereco_id):
     if request.method == 'POST':
         eleitor_id = endereco.eleitor.id_usuario
         endereco.delete()
+        user = CustomUser.objects.get(pk=request.user.id)
+        extra = {
+                'user_id': user.id,
+                'username': user.username,
+                'ip_address': request.META.get('REMOTE_ADDR')
+                }    
+        logger.error('EXCLUIU o endereço com o ID: %s',endereco_id,extra=extra)
         return redirect('editar_eleitor', usuario_id=eleitor_id)
 
 
